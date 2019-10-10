@@ -39,13 +39,7 @@ import com.qualcomm.robotcore.util.Range;
 
 
 /**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ * This op mode is currently used for testing functionality *
  */
 @Autonomous(name="Basic: Testing Linear OpMode", group="Linear Opmode")
 
@@ -55,6 +49,15 @@ public class DriveTesterLinear extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DefenderBot junior = new DefenderBot();
 
+    // This method is not perfect yet. Ideally should be broken out into a separate interface or a DefenderBot method.
+    // Need to add ability to break on sensor input, ideally we pass allow an array of functions/methods to be passed
+    // that are called every "tick"
+    public void wait(double time) {
+	    double start = runtime.milliseconds();
+	    while (runtime.milliseconds() < (start + time)) {
+		    sleep(500); // This "tick" value should perhaps be a default value but changeable in the wait call
+	    }
+    }
 
     @Override
     public void runOpMode() {
@@ -68,17 +71,27 @@ public class DriveTesterLinear extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        
-        junior.driveRight(0.5,0.5);
-        sleep(4000);
 
+
+/*
+	   while (opModeIsActive() && !junior.isFrontTouching()) {
+		   junior.driveForward(0.5, 0.5);
+	   }
+	   junior.driveBackward(0.5,0.5);
+*/
+
+
+//         junior.driveForward(1,1);
+//        sleep(2173);
         // run until the end of the match (driver presses STOP)
-//        while (opModeIsActive()) {
+/*    while (opModeIsActive()) {
 
                        // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-//            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("Touching: ", junior.isFrontTouching() ? "yes" : "no");
+           //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
-//         }
+        }
+        */
     }
 }

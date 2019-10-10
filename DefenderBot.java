@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -48,9 +49,14 @@ public class DefenderBot
     public DcMotor frontRightDrive = null;
     public DcMotor rearLeftDrive = null;
     public DcMotor rearRightDrive = null;
+    public TouchSensor frontTouch = null;
 
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
+
+    // constants for Skystone foam floor tiles with small mechanum wheels on the "junior" bot
+    public double forwardSecondsPerInch = 0.0571895424836602;
+    public double sidewaysSecondsPerInch = 0.0690476190476191;
 
     /* Constructor */
     public DefenderBot(){
@@ -67,7 +73,10 @@ public class DefenderBot
         frontRightDrive  = hwMap.get(DcMotor.class, "Front Right Red");
         rearLeftDrive = hwMap.get(DcMotor.class, "Rear Left Camo");
         rearRightDrive = hwMap.get(DcMotor.class, "Rear Right Green");
-        
+
+        frontTouch = hwMap.get(TouchSensor.class, "front touch");
+
+
         // Set all motors to zero power
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
@@ -81,118 +90,165 @@ public class DefenderBot
 //        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
-    
-    public void driveForward(double leftPower, double rightPower) {
+
+	public void setDrivePower(Double frontLeftPower, Double frontRightPower) {
+		setDrivePower(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
+	}
+	public void setDrivePower(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
+		if (rearLeftPower == null) {
+		    rearLeftPower = frontLeftPower;
+		}
+		if (rearRightPower == null) {
+		    rearRightPower = frontRightPower;
+		}
+		frontLeftDrive.setPower(frontLeftPower);
+		frontRightDrive.setPower(frontRightPower);
+		rearLeftDrive.setPower(rearLeftPower);
+		rearRightDrive.setPower(rearRightPower);
+    }
+
+    //--------------------------------------------------------------------------------------------
+
+    public void driveForward(double frontLeftPower, double frontRightPower) {
+	    driveForward(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
+    }
+    public void driveForward(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
+	    driveForward(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
+	}
+    public void driveForward(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        frontLeftDrive.setPower(leftPower);
-        frontRightDrive.setPower(rightPower);
-        rearLeftDrive.setPower(leftPower);
-        rearRightDrive.setPower(rightPower);
+	   setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
     }
 
-    public void driveBackward(double leftPower, double rightPower) {
+    //--------------------------------------------------------------------------------------------
+
+
+    public void driveBackward(double frontLeftPower, double frontRightPower) {
+	    driveBackward(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
+    }
+    public void driveBackward(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
+	    driveBackward(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
+	}
+    public void driveBackward(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
 
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        frontLeftDrive.setPower(leftPower);
-        frontRightDrive.setPower(rightPower);
-        rearLeftDrive.setPower(leftPower);
-        rearRightDrive.setPower(rightPower);
+	   setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
     }
+
+    //--------------------------------------------------------------------------------------------
 
     public void stopDriving() {
-        double leftPower;
-        double rightPower;
-        leftPower    = 0 ;
-        rightPower   = 0 ;
-
-
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        frontLeftDrive.setPower(leftPower);
-        frontRightDrive.setPower(rightPower);
-        rearLeftDrive.setPower(leftPower);
-        rearRightDrive.setPower(rightPower);
+	   setDrivePower(new Double(0), new Double(0));
     }
-    
-    public void driveLeft(double leftPower, double rightPower) {
-        
+
+    //--------------------------------------------------------------------------------------------
+
+    public void driveLeft(double frontLeftPower, double frontRightPower) {
+	    driveLeft(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
+    }
+    public void driveLeft(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
+	    driveLeft(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
+	}
+    public void driveLeft(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
+
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        
-        frontLeftDrive.setPower(leftPower);
-        frontRightDrive.setPower(rightPower);
-        rearLeftDrive.setPower(leftPower);
-        rearRightDrive.setPower(rightPower);
+
+	   setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
     }
 
-    public void driveRight(double leftPower, double rightPower) {
+    //--------------------------------------------------------------------------------------------
+
+    public void driveRight(double frontLeftPower, double frontRightPower) {
+	    driveRight(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
+    }
+    public void driveRight(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
+	    driveRight(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
+	}
+
+    public void driveRight(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        frontLeftDrive.setPower(leftPower);
-        frontRightDrive.setPower(rightPower);
-        rearLeftDrive.setPower(leftPower);
-        rearRightDrive.setPower(rightPower);
-
+	   setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
     }
 
-    public void turnClockwise(double leftPower, double rightPower) {
+    //--------------------------------------------------------------------------------------------
+
+
+    public void turnClockwise(double frontLeftPower, double frontRightPower) {
+	    turnClockwise(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
+    }
+    public void turnClockwise(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
+	    turnClockwise(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
+	}
+
+    public void turnClockwise(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
-    
-        frontLeftDrive.setPower(leftPower);
-        frontRightDrive.setPower(rightPower);
-        rearLeftDrive.setPower(leftPower);
-        rearRightDrive.setPower(rightPower);
-    
+
+	   setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
+
     }
 
-    public void turnClockwiseRearRight(double leftPower, double rightPower) {
+    //--------------------------------------------------------------------------------------------
+
+
+    public void turnClockwiseRearRight(double frontLeftPower) {
+	    turnClockwiseRearRight(new Double(frontLeftPower));
+	}
+    public void turnClockwiseRearRight(Double leftPower) {
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
-    
-        frontLeftDrive.setPower(leftPower);
-        frontRightDrive.setPower(0);
-        rearLeftDrive.setPower(leftPower);
-        rearRightDrive.setPower(0);
-    
+
+	   setDrivePower(leftPower, new Double(0), leftPower, new Double(0));
+
     }
+
+    //--------------------------------------------------------------------------------------------
 
     public void turnClockwiseRearAxis(double leftPower, double rightPower) {
+	    turnClockwiseRearAxis(new Double(leftPower), new Double(rightPower));
+	}
+    public void turnClockwiseRearAxis(Double leftPower, Double rightPower) {
 
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
-    
+
+	   setDrivePower(leftPower, rightPower, new Double(0), new Double(0));
+
         frontLeftDrive.setPower(leftPower);
         frontRightDrive.setPower(rightPower);
         rearLeftDrive.setPower(0);
         rearRightDrive.setPower(0);
-    
+
     }
 
     public void driveDiagonalForwardRight(double leftPower, double rightPower) {
@@ -201,12 +257,12 @@ public class DefenderBot
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
-    
+
         frontLeftDrive.setPower(leftPower);
         frontRightDrive.setPower(0);
         rearLeftDrive.setPower(0);
         rearRightDrive.setPower(rightPower);
-    
+
     }
 
     public void driveDiagonalForwardLeft(double leftPower, double rightPower) {
@@ -215,12 +271,12 @@ public class DefenderBot
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
-    
+
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(rightPower);
         rearLeftDrive.setPower(leftPower);
         rearRightDrive.setPower(0);
-    
+
     }
 
     public void driveDiagonalBackwardLeft(double leftPower, double rightPower) {
@@ -229,12 +285,12 @@ public class DefenderBot
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
-    
+
         frontLeftDrive.setPower(leftPower);
         frontRightDrive.setPower(0);
         rearLeftDrive.setPower(0);
         rearRightDrive.setPower(rightPower);
-    
+
     }
 
     public void driveDiagonalBackwardRight(double leftPower, double rightPower) {
@@ -243,13 +299,17 @@ public class DefenderBot
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
-    
+
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(rightPower);
         rearLeftDrive.setPower(leftPower);
         rearRightDrive.setPower(0);
-    
+
     }
-    
+
+    public boolean isFrontTouching() {
+	    return frontTouch.isPressed();
+    }
+
  }
 
