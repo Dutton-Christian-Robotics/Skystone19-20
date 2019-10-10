@@ -67,6 +67,7 @@ public class DefenderBot
         hwMap = ahwMap;
 
         // Define and Initialize Motors
+        // IDEALLY THESE MAPPINGS SHOULD BE SPECIFIED AS CONSTANT VALUES, PERHAPS IN A SEPARATE CONFIG FILE
         frontLeftDrive  = hwMap.get(DcMotor.class, "Front Left Orange");
         frontRightDrive  = hwMap.get(DcMotor.class, "Front Right Red");
         rearLeftDrive = hwMap.get(DcMotor.class, "Rear Left Camo");
@@ -88,6 +89,20 @@ public class DefenderBot
 //        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
+
+    //--------------------------------------------------------------------------------------------
+
+/*
+	THE FOLLOWING CODE DRIVE FUNCTIONS SHOULD NOT BE CONSIDERED FINAL YET.
+
+	I'm trying to use method overloading so that we have a variety of wys to call drive functions. There are a couple of problems
+	in Java I'm trying to get around, namely that you can't provide default method argument values and simple types like
+	double can't be compared against null (double will be set to 0 if not provided, and since 0 is a meaningful value for
+	motor power, it's not an ideal value).
+
+	We'd like drive functions to be flexible. Able to be called simply (perhaps with just one power that's applied to all wheels).
+	But also with the ability to set power individually for all wheels, once we need to tweak final performance.
+*/
 
 	public void setDrivePower(Double frontLeftPower, Double frontRightPower) {
 		setDrivePower(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
@@ -242,12 +257,13 @@ public class DefenderBot
 
 	   setDrivePower(leftPower, rightPower, new Double(0), new Double(0));
 
-        frontLeftDrive.setPower(leftPower);
-        frontRightDrive.setPower(rightPower);
-        rearLeftDrive.setPower(0);
-        rearRightDrive.setPower(0);
-
     }
+
+    //--------------------------------------------------------------------------------------------
+
+/*
+	The following drive functions have not been abstracted yet.
+*/
 
     public void driveDiagonalForwardRight(double leftPower, double rightPower) {
 
@@ -304,6 +320,8 @@ public class DefenderBot
         rearRightDrive.setPower(0);
 
     }
+
+    //--------------------------------------------------------------------------------------------
 
     public boolean isFrontTouching() {
 	    return frontTouch.isPressed();
