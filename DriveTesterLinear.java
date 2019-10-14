@@ -61,16 +61,14 @@ public class DriveTesterLinear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        junior.init(hardwareMap);
+		junior.init(hardwareMap, new JuniorConfiguration());
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+		telemetry.addData("Status", "Initialized");
+		telemetry.update();
 
-
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        runtime.reset();
+		// Wait for the game to start (driver presses PLAY)
+		waitForStart();
+		runtime.reset();
 
 
 /*
@@ -81,8 +79,8 @@ public class DriveTesterLinear extends LinearOpMode {
 */
 
 
-//         junior.driveForward(1,1);
-//        sleep(2173);
+        junior.driveForward(1,1);
+       sleep(1500);
         // run until the end of the match (driver presses STOP)
 /*    while (opModeIsActive()) {
 
