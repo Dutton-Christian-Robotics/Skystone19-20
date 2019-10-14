@@ -5,7 +5,7 @@ Code for Dutton Christian School's Middle School Robotics team for the 2019-2020
 ## Code Goals:
 * Abstract bot functionality into a DefenderBot class so that multiple specific OpModes can reuse code.
 * Allow for maximum flexibility in testing by abstracting configuration and setup information into easily swappable components.
-* Ensure that "tweaking" functionality can be done without touching core functionality code.
+* Ensure that "tweaking" functionality can be done without rewriting core functionality.
 * Provide a library of easy to use tools for common situations (e.g. perform a robot function until time expires or some other condition happens).
 
 ## To Do List:
