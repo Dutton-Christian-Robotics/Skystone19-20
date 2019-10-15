@@ -6,14 +6,47 @@
 */
 
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 abstract class DefenderBotConfiguration {
-    public String frontLeftMotorName = null;
-    public String frontRightMotorName = null;
-    public String rearLeftMotorName = null;
-    public String rearRightMotorName = null;
+	public String frontLeftMotorName = null;
+	public DcMotor.Direction frontLeftMotorForwardDirection = null;
 
-    public Double forwardSecondsPerInch = null;
-    public Double sidewaysSecondsPerInch = null;
+	public String frontRightMotorName = null;
+	public DcMotor.Direction frontRightMotorForwardDirection = null;
+
+	public String rearLeftMotorName = null;
+	public DcMotor.Direction rearLeftMotorForwardDirection = null;
+
+	public String rearRightMotorName = null;
+	public DcMotor.Direction rearRightMotorForwardDirection = null;
+
+
+	public String liftMotorName = null;
+	public DcMotor.Direction liftMotorForwardDirection = null;
+
+	public String extendMotorName = null;
+	public DcMotor.Direction extendMotorForwardDirection = null;
+
+	public String grabMotorName = null;
+	public DcMotor.Direction grabMotorForwardDirection = null;
+
+	public Double forwardSecondsPerInch = null;
+	public Double sidewaysSecondsPerInch = null;
+
+	/*
+		Not used currently, this is a convenience method that could let us setup our motors with less duplication of code,
+		such as by iterating through an array of motor names.
+	*/
+/*
+	public DcMotor.Direction forwardDirectionForMotor(String motorName) {
+		try {
+			return this.getClass().getField(motorName + "ForwardDirection").get(this));
+		} catch (Exception e) {
+			return DcMotor.Direction.FORWARD;
+		}
+	}
+*/
+
 
 }
