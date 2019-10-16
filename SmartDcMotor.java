@@ -16,33 +16,28 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 	bot and then we just ask the motor to go in the right CONCEPTUAL direction and the motor itself
 	will choose way way it should PHYSICALLY move.
 
+	FYI, finding the right way to subclass DcMotor was not entirely obvious.
+
 */
 
 public class SmartDcMotor extends DcMotorImpl {
  	public DcMotor.Direction forwardDirection;
  	public DcMotor.Direction reverseDirection;
 
- 	// This is the default constructor. Presume that it's mounted "normally"
-/*
-	public SmartDcMotor() {
-		super();
-		forwardDirection = DcMotor.Direction.FORWARD;
-		reverseDirection = DcMotor.Direction.REVERSE;
-	}
 
-	// Alternate constructor for instantiating with a direction
-	public SmartDcMotor(DcMotor.Direction fd) {
-		super();
-		establishForwardDirection(fd);
-	}
-*/
-
+ 	/*
+		This is the constructor we call from the bot class. Call super class with information from
+		the hardware map.
+ 	*/
 	public SmartDcMotor(HardwareMap hwMap, String motorName, DcMotorSimple.Direction direction) {
 		super(hwMap.get(DcMotor.class, motorName).getController(), hwMap.get(DcMotor.class, motorName).getPortNumber());
 		establishForwardDirection(direction);
 
 	}
 
+	/*
+		I'm not sure we need these three constructors but I haven't tried removing them yet.
+	*/
 	public SmartDcMotor(DcMotorController controller, int portNumber) {
 		super(controller, portNumber);
 	}
