@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import java.util.Random;
 
 /**
  * This op mode is currently used for testing functionality *
@@ -79,8 +80,34 @@ public class DriveTesterLinear extends LinearOpMode {
 */
 
 
+/*
         junior.driveForward(1,1);
        sleep(1500);
+*/
+
+		Random rand = new Random();
+		while (opModeIsActive()) {
+		   if (junior.isFrontTouching()) {
+			   junior.driveBackward(0.5,0.5);
+			   sleep(500);
+			   int r = rand.nextInt(10);
+			   if (r > 7) {
+				   junior.turnClockwise(0.5, 0.5);
+				   sleep(1000); // this sleep time is enough to guarantee the bot turns 1/4
+				} else if (r < 4) {
+				   junior.turnCounterClockwise(0.5, 0.5);
+				   sleep(1000); // this sleep time is enough to guarantee the bot turns 1/4
+			   } else {
+				   junior.turnClockwise(0.5, 0.5);
+				   sleep(2000); // this sleep time is enough to guarantee the bot turns 1/2
+
+			   }
+
+		   }
+		   junior.driveForward(0.5, 0.5);
+	   }
+// 	   junior.driveBackward(0.5,0.5);
+
         // run until the end of the match (driver presses STOP)
 /*    while (opModeIsActive()) {
 
