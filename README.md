@@ -16,7 +16,6 @@ Code for Dutton Christian School's Middle School Robotics team for the 2019-2020
 * Implement additional sensor types, such as magnetic switch and color/distance sensor.
 * Implement ability to drive Hex motors by encoder distance.
 * Implement manipulator motors
-* Move motor forward/backward names to configuration
 
 ## In Progress
 * Implement a configuration class. This could include values for motor drive times, as well as names for port mappings. This class would be instantiated in the OpMode class and passed to the DefenderBot class. This will allow us to keep the Bot code clean and minimally changeable, but let us quickly swap out and test functionality by using different configuration files.
@@ -24,3 +23,4 @@ Code for Dutton Christian School's Middle School Robotics team for the 2019-2020
 
 ## Done
 * Created motor subclass that allows "forward" and "reverse" to be established in configuration file--for those times when motors are mounted backward.
+* Move motor forward/backward names to configuration
