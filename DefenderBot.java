@@ -42,13 +42,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class DefenderBot
 {
-    /* Public OpMode members. */
     public SmartDcMotor frontLeftDrive = null;
     public SmartDcMotor frontRightDrive = null;
     public SmartDcMotor rearLeftDrive = null;
     public SmartDcMotor rearRightDrive = null;
 
     public SmartDcMotor liftMotor = null;
+    public SmartDcMotor tiltMotor = null;
     public SmartDcMotor extendMotor = null;
     public SmartDcMotor grabMotor = null;
 
@@ -58,49 +58,25 @@ public class DefenderBot
     private DefenderBotConfiguration botConfiguration 	= null;
     private ElapsedTime period  = new ElapsedTime();
 
-    // constants for Skystone foam floor tiles with small mechanum wheels on the "junior" bot
     public Double forwardSecondsPerInch = null;
     public Double sidewaysSecondsPerInch = null;
 
-    /* Constructor */
     public DefenderBot() {
 
     }
 
-    /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap, DefenderBotConfiguration botConfig) {
 		// Save reference to Hardware map and config file
 		hwMap = ahwMap;
 		botConfiguration = botConfig;
 
 		// Define and Initialize Motors and timing using config file
-// 		frontLeftDrive  = hwMap.get(SmartDcMotor.class, botConfiguration.frontLeftMotorName);
-/*
-		frontLeftDrive = new SmartDcMotor(hwMap.get(DcMotor.class, botConfiguration.frontLeftMotorName).getController(), hwMap.get(DcMotor.class, botConfiguration.frontLeftMotorName).getPortNumber());
-		frontLeftDrive.establishForwardDirection(botConfiguration.frontLeftMotorForwardDirection);
-*/
+		// Using the SmartDcMotor class allows us to separate out the CONCEPTUAL direction we want
+		// the motor to turn from the PHYSICAL direction of how the motor is mounted.
 		frontLeftDrive = new SmartDcMotor(hwMap, botConfiguration.frontLeftMotorName, botConfiguration.frontLeftMotorForwardDirection);
-
-// 		frontRightDrive  = hwMap.get(SmartDcMotor.class, botConfiguration.frontRightMotorName);
 		frontRightDrive = new SmartDcMotor(hwMap, botConfiguration.frontRightMotorName, botConfiguration.frontRightMotorForwardDirection);
-/*
-		frontRightDrive = new SmartDcMotor(hwMap.get(DcMotor.class, botConfiguration.frontRightMotorName).getController(), hwMap.get(DcMotor.class, botConfiguration.frontRightMotorName).getPortNumber());
-		frontRightDrive.establishForwardDirection(botConfiguration.frontRightMotorForwardDirection);
-*/
-
-// 		rearLeftDrive = hwMap.get(SmartDcMotor.class, botConfiguration.rearLeftMotorName);
 		rearLeftDrive = new SmartDcMotor(hwMap, botConfiguration.rearLeftMotorName, botConfiguration.rearLeftMotorForwardDirection);
-/*
-		rearLeftDrive = new SmartDcMotor(hwMap.get(DcMotor.class, botConfiguration.rearLeftMotorName).getController(), hwMap.get(DcMotor.class, botConfiguration.rearLeftMotorName).getPortNumber());
-		rearLeftDrive.establishForwardDirection(botConfiguration.rearLeftMotorForwardDirection);
-*/
-
-// 		rearRightDrive = hwMap.get(SmartDcMotor.class, botConfiguration.rearRightMotorName);
 		rearRightDrive = new SmartDcMotor(hwMap, botConfiguration.rearRightMotorName, botConfiguration.rearRightMotorForwardDirection);
-/*
-		rearRightDrive = new SmartDcMotor(hwMap.get(DcMotor.class, botConfiguration.rearRightMotorName).getController(), hwMap.get(DcMotor.class, botConfiguration.rearRightMotorName).getPortNumber());
-		rearRightDrive.establishForwardDirection(botConfiguration.rearRightMotorForwardDirection);
-*/
 
 /*
 		liftMotor  = hwMap.get(SmartDcMotor.class, botConfiguration.liftMotorName);
@@ -135,6 +111,24 @@ public class DefenderBot
     //--------------------------------------------------------------------------------------------
 
     public void stopDriveMotors() {
+		frontLeftDrive.setPower(0);
+		frontRightDrive.setPower(0);
+		rearLeftDrive.setPower(0);
+		rearRightDrive.setPower(0);
+    }
+
+    //--------------------------------------------------------------------------------------------
+
+    public void stopManipulatorMotors() {
+	    liftMotor.setPower(0);
+	    tiltMotor.setPower(0);
+	    extendMotor.setPower(0);
+	    grabMotor.setPower(0);
+    }
+
+    //--------------------------------------------------------------------------------------------
+
+    public void stopAllMotors() {
 		frontLeftDrive.setPower(0);
 		frontRightDrive.setPower(0);
 		rearLeftDrive.setPower(0);
@@ -389,6 +383,63 @@ public class DefenderBot
     }
 
     //--------------------------------------------------------------------------------------------
+
+    	public void moveLiftUp(double power) {
+	    	liftMotor.setDirectionForward();
+	    	liftMotor.setPower(power);
+    	}
+
+    //--------------------------------------------------------------------------------------------
+
+    	public void moveLiftDown(double power) {
+	    	liftMotor.setDirectionReverse();
+	    	liftMotor.setPower(power);
+    	}
+
+    //--------------------------------------------------------------------------------------------
+
+    	public void tiltArmUp(double power) {
+	    	tiltMotor.setDirectionForward();
+	    	tiltMotor.setPower(power);
+    	}
+
+    //--------------------------------------------------------------------------------------------
+
+    	public void tiltArmDown(double power) {
+	    	tiltMotor.setDirectionReverse();
+	    	tiltMotor.setPower(power);
+    	}
+
+    //--------------------------------------------------------------------------------------------
+
+    	public void extendArm(double power) {
+	    	liftMotor.setDirectionForward();
+	    	liftMotor.setPower(power);
+    	}
+
+    //--------------------------------------------------------------------------------------------
+
+    	public void retractArm(double power) {
+	    	liftMotor.setDirectionReverse();
+	    	liftMotor.setPower(power);
+    	}
+
+    //--------------------------------------------------------------------------------------------
+
+    	public void grabBlock(double power) {
+	    	liftMotor.setDirectionForward();
+	    	liftMotor.setPower(power);
+    	}
+
+    //--------------------------------------------------------------------------------------------
+
+    	public void releaseBlock(double power) {
+	    	liftMotor.setDirectionReverse();
+	    	liftMotor.setPower(power);
+    	}
+
+    //--------------------------------------------------------------------------------------------
+
 
     public boolean isFrontTouching() {
 	    return frontTouch.isPressed();
