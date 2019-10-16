@@ -25,6 +25,9 @@ abstract class DefenderBotConfiguration {
 	public String liftMotorName = null;
 	public DcMotor.Direction liftMotorForwardDirection = null;
 
+	public String tiltMotorName = null;
+	public DcMotor.Direction tiltMotorForwardDirection = null;
+
 	public String extendMotorName = null;
 	public DcMotor.Direction extendMotorForwardDirection = null;
 
