@@ -65,8 +65,8 @@ public class JuniorIterativeTeleOp extends OpMode
 	public void init() {
 		junior.init(hardwareMap, new JuniorConfiguration());
 
-        // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
+		// Tell the driver that initialization is complete.
+		telemetry.addData("Status", "Initialized");
     }
 
     /*
@@ -102,25 +102,48 @@ public class JuniorIterativeTeleOp extends OpMode
         double rightStickY = -gamepad1.right_stick_y;
         double rightStickX = gamepad1.right_stick_x;
 
-	   if (rightStickX > 0) {
-		   junior.driveRight(rightStickX, rightStickX);
-	   } else if (rightStickX < 0) {
-		   junior.driveLeft(-1 * rightStickX, -1 * rightStickX);
-	   } else if (leftStickX == 0) {
-			if (leftStickY > 0) {
-				junior.driveForward(leftStickY, leftStickY);
-			} else if (leftStickY < 0) {
-				junior.driveBackward(-1 * leftStickY, -1 * leftStickY);
+	   if (gamepad1.y) {
+	        telemetry.addData("lift", "going up");
+// 		   junior.moveLiftUp();
+	   } else if (gamepad1.a) {
+	        telemetry.addData("lift", "going down");
+// 		   junior.moveLiftDown();
+	   }
+	   if (gamepad1.x) {
+	        telemetry.addData("arm", "extending");
+// 		   junior.extendArm();
+	   } else if (gamepad1.b) {
+	        telemetry.addData("arm", "retracting");
+// 		   junior.retractArm();
+	   }
+
+		if (gamepad1.dpad_up && gamepad1.dpad_left) {
+			junior.driveDiagonalForwardLeft(1,1);
+		} else if (gamepad1.dpad_up && gamepad1.dpad_right) {
+		   	junior.driveDiagonalForwardRight(1,1);
+		   } else if (gamepad1.dpad_down && gamepad1.dpad_left) {
+			   junior.driveDiagonalBackwardLeft(1,1);
+		   } else if (gamepad1.dpad_down && gamepad1.dpad_right) {
+			   junior.driveDiagonalBackwardRight(1,1);
+		   } else if (rightStickX > 0) {
+			   junior.driveRight(rightStickX, rightStickX);
+		   } else if (rightStickX < 0) {
+			   junior.driveLeft(-1 * rightStickX, -1 * rightStickX);
+		   } else if (leftStickX == 0) {
+				if (leftStickY > 0) {
+					junior.driveForward(leftStickY, leftStickY);
+				} else if (leftStickY < 0) {
+					junior.driveBackward(-1 * leftStickY, -1 * leftStickY);
+				} else {
+					junior.stopDriving();
+				}
+			} else if (leftStickX > 0) {
+				junior.turnClockwise(leftStickX, leftStickX);
+			} else if (leftStickX < 0) {
+				junior.turnCounterClockwise(-1 * leftStickX, -1 * leftStickX);
 			} else {
 				junior.stopDriving();
 			}
-		} else if (leftStickX > 0) {
-			junior.turnClockwise(leftStickX, leftStickX);
-		} else if (leftStickX < 0) {
-			junior.turnCounterClockwise(-1 * leftStickX, -1 * leftStickX);
-		} else {
-			junior.stopDriving();
-		}
 
 /*
         double turn  =  gamepad1.right_stick_x;
