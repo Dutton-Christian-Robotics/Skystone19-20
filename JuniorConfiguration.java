@@ -21,10 +21,12 @@ class JuniorConfiguration extends DefenderBotConfiguration {
 		liftMotorName = null;
 		extendMotorName = null;
 		grabMotorName = null;
+		tiltMotorName = null;
 
 		liftMotorForwardDirection = null;
 		extendMotorForwardDirection = null;
 		grabMotorForwardDirection = null;
+		tiltMotorForwardDirection = null;
 */
 
 		forwardSecondsPerInch	= 0.0571895424836602;
