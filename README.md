@@ -9,6 +9,7 @@ Code for Dutton Christian School's Middle School Robotics team for the 2019-2020
 * Provide a library of easy to use tools for common situations (e.g. perform a robot function until time expires or some other condition happens).
 
 ## To Do List:
+* Implement STOP ALL MOTORS function
 * Continue to properly abstract drive functions.
 * Implement ability to drive a particular distance (rather than time), with drive time calculated based on time/distance constants.
 * Get a functional "wait" method that can be interrupted by sensors.
