@@ -42,13 +42,13 @@ import java.util.Random;
 /**
  * This op mode is currently used for testing functionality *
  */
-@Autonomous(name="Basic: Testing Linear OpMode", group="Linear Opmode")
+@Autonomous(name="Basic: Production Drive Test Linear OpMode", group="Linear Opmode")
 
-public class DriveTesterLinear extends LinearOpMode {
+public class ProductionDriveTesterLinear extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DefenderBot junior = new DefenderBot();
+    private DefenderBot productionBot = new DefenderBot();
 
     // This method is not perfect yet. Ideally should be broken out into a separate interface or a DefenderBot method.
     // Need to add ability to break on sensor input, ideally we pass allow an array of functions/methods to be passed
@@ -62,7 +62,7 @@ public class DriveTesterLinear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-		junior.init(hardwareMap, new JuniorConfiguration());
+		productionBot.init(hardwareMap, new ProductionTestConfiguration());
 
 		telemetry.addData("Status", "Initialized");
 		telemetry.update();
@@ -73,47 +73,47 @@ public class DriveTesterLinear extends LinearOpMode {
 
 
 /*
-	   while (opModeIsActive() && !junior.isFrontTouching()) {
-		   junior.driveForward(0.5, 0.5);
+	   while (opModeIsActive() && !productionBot.isFrontTouching()) {
+		   productionBot.driveForward(0.5, 0.5);
 	   }
-	   junior.driveBackward(0.5,0.5);
+	   productionBot.driveBackward(0.5,0.5);
 */
 
 
 /*
-        junior.driveForward(1,1);
+        productionBot.driveForward(1,1);
        sleep(1500);
 */
 
 		Random rand = new Random();
 		while (opModeIsActive()) {
-		   if (junior.isFrontTouching()) {
-			   junior.driveBackward(0.5,0.5);
+		   if (productionBot.isFrontTouching()) {
+			   productionBot.driveBackward(0.5,0.5);
 			   sleep(500);
 			   int r = rand.nextInt(10);
 			   if (r > 7) {
-				   junior.turnClockwise(0.5, 0.5);
+				   productionBot.turnClockwise(0.5, 0.5);
 				   sleep(1000); // this sleep time is enough to guarantee the bot turns 1/4
 				} else if (r < 4) {
-				   junior.turnCounterClockwise(0.5, 0.5);
+				   productionBot.turnCounterClockwise(0.5, 0.5);
 				   sleep(1000); // this sleep time is enough to guarantee the bot turns 1/4
 			   } else {
-				   junior.turnClockwise(0.5, 0.5);
+				   productionBot.turnClockwise(0.5, 0.5);
 				   sleep(2000); // this sleep time is enough to guarantee the bot turns 1/2
 
 			   }
 
 		   }
-		   junior.driveForward(0.5, 0.5);
+		   productionBot.driveForward(0.5, 0.5);
 	   }
-// 	   junior.driveBackward(0.5,0.5);
+// 	   productionBot.driveBackward(0.5,0.5);
 
         // run until the end of the match (driver presses STOP)
 /*    while (opModeIsActive()) {
 
                        // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Touching: ", junior.isFrontTouching() ? "yes" : "no");
+            telemetry.addData("Touching: ", productionBot.isFrontTouching() ? "yes" : "no");
            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
