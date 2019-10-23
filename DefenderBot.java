@@ -52,7 +52,7 @@ public class DefenderBot
     public SmartDcMotor extendMotor = null;
     public SmartDcMotor grabMotor = null;
 
-    public TouchSensor frontTouch = null;
+//     public TouchSensor frontTouch = null;
 
     private HardwareMap hwMap           = null;
     private DefenderBotConfiguration botConfiguration 	= null;
@@ -78,27 +78,30 @@ public class DefenderBot
 		rearLeftDrive = new SmartDcMotor(hwMap, botConfiguration.rearLeftMotorName, botConfiguration.rearLeftMotorForwardDirection);
 		rearRightDrive = new SmartDcMotor(hwMap, botConfiguration.rearRightMotorName, botConfiguration.rearRightMotorForwardDirection);
 
-/*
-		liftMotor  = hwMap.get(SmartDcMotor.class, botConfiguration.liftMotorName);
-		liftMotor.establishForwardDirection(botConfiguration.liftMotorForwardDirection);
+		frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		rearLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+		rearRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-		extendMotor = hwMap.get(SmartDcMotor.class, botConfiguration.extendMotorName);
-		extendMotor.establishForwardDirection(botConfiguration.extendMotorForwardDirection);
 
-		grabMotor = hwMap.get(SmartDcMotor.class, botConfiguration.grabMotorName);
-		grabMotor.establishForwardDirection(botConfiguration.grabMotorForwardDirection);
-*/
+
+
+		liftMotor = new SmartDcMotor(hwMap, botConfiguration.liftMotorName, botConfiguration.liftMotorForwardDirection);
+
+		extendMotor = new SmartDcMotor(hwMap, botConfiguration.extendMotorName, botConfiguration.extendMotorForwardDirection);
+
+		grabMotor = new SmartDcMotor(hwMap, botConfiguration.grabMotorName, botConfiguration.grabMotorForwardDirection);
 
 		forwardSecondsPerInch = botConfiguration.forwardSecondsPerInch;
 		sidewaysSecondsPerInch = botConfiguration.sidewaysSecondsPerInch;
 
 
 
-		frontTouch = hwMap.get(TouchSensor.class, "front touch");
+// 		frontTouch = hwMap.get(TouchSensor.class, "front touch");
 
 
 		// Set all motors to zero power
-		stopDriveMotors();
+		stopAllMotors();
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -121,7 +124,7 @@ public class DefenderBot
 
     public void stopManipulatorMotors() {
 	    liftMotor.setPower(0);
-	    tiltMotor.setPower(0);
+// 	    tiltMotor.setPower(0);
 	    extendMotor.setPower(0);
 	    grabMotor.setPower(0);
     }
@@ -129,10 +132,8 @@ public class DefenderBot
     //--------------------------------------------------------------------------------------------
 
     public void stopAllMotors() {
-		frontLeftDrive.setPower(0);
-		frontRightDrive.setPower(0);
-		rearLeftDrive.setPower(0);
-		rearRightDrive.setPower(0);
+		stopDriveMotors();
+		stopManipulatorMotors();
     }
 
     //--------------------------------------------------------------------------------------------
@@ -218,10 +219,18 @@ public class DefenderBot
 	}
     public void driveLeft(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
 
+		/*
+			Once we started programming the "real" bot we had a strange problem. After capturing the "physical"
+			forward direction for each wheel, we could get it to drive forward or backward fine. But when going
+			sideways or diagonal, the right-side wheels turned the wrong direction. Still trying to figure out why.
+			Until then, we bandaid the problem by switching which way we say we want to go.
+		*/
         frontLeftDrive.setDirectionReverse();
-        frontRightDrive.setDirectionForward();
+//         frontRightDrive.setDirectionForward();
+        frontRightDrive.setDirectionReverse();
         rearLeftDrive.setDirectionForward();
-        rearRightDrive.setDirectionReverse();
+//         rearRightDrive.setDirectionReverse();
+        rearRightDrive.setDirectionForward();
 
 	   setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
     }
@@ -235,14 +244,22 @@ public class DefenderBot
 	    driveRight(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
 	}
 
-    public void driveRight(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
+	public void driveRight(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
 
-        frontLeftDrive.setDirectionForward();
-        frontRightDrive.setDirectionReverse();
-        rearLeftDrive.setDirectionReverse();
-        rearRightDrive.setDirectionForward();
+		/*
+			Once we started programming the "real" bot we had a strange problem. After capturing the "physical"
+			forward direction for each wheel, we could get it to drive forward or backward fine. But when going
+			sideways or diagonal, the right-side wheels turned the wrong direction. Still trying to figure out why.
+			Until then, we bandaid the problem by switching which way we say we want to go.
+		*/
+		frontLeftDrive.setDirectionForward();
+//         frontRightDrive.setDirectionReverse();
+		frontRightDrive.setDirectionForward();
+		rearLeftDrive.setDirectionReverse();
+//         rearRightDrive.setDirectionForward();
+		rearRightDrive.setDirectionReverse();
 
-	   setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
+		setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
     }
 
     //--------------------------------------------------------------------------------------------
@@ -413,36 +430,37 @@ public class DefenderBot
     //--------------------------------------------------------------------------------------------
 
     	public void extendArm(double power) {
-	    	liftMotor.setDirectionForward();
-	    	liftMotor.setPower(power);
+	    	extendMotor.setDirectionForward();
+	    	extendMotor.setPower(power);
     	}
 
     //--------------------------------------------------------------------------------------------
 
     	public void retractArm(double power) {
-	    	liftMotor.setDirectionReverse();
-	    	liftMotor.setPower(power);
+	    	extendMotor.setDirectionReverse();
+	    	extendMotor.setPower(power);
     	}
 
     //--------------------------------------------------------------------------------------------
 
     	public void grabBlock(double power) {
-	    	liftMotor.setDirectionForward();
-	    	liftMotor.setPower(power);
+	    	grabMotor.setDirectionForward();
+	    	grabMotor.setPower(power);
     	}
 
     //--------------------------------------------------------------------------------------------
 
     	public void releaseBlock(double power) {
-	    	liftMotor.setDirectionReverse();
-	    	liftMotor.setPower(power);
+	    	grabMotor.setDirectionReverse();
+	    	grabMotor.setPower(power);
     	}
 
     //--------------------------------------------------------------------------------------------
 
 
     public boolean isFrontTouching() {
-	    return frontTouch.isPressed();
+	    return false;
+// 	    return frontTouch.isPressed();
     }
 
  }
