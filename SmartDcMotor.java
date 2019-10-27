@@ -24,6 +24,11 @@ public class SmartDcMotor extends DcMotorImpl {
  	public DcMotor.Direction forwardDirection;
  	public DcMotor.Direction reverseDirection;
 
+ 	public enum MotorType {
+	 	HEX,
+	 	TORQUENADO
+ 	}
+
 
  	/*
 		This is the constructor we call from the bot class. Call super class with information from
@@ -32,6 +37,12 @@ public class SmartDcMotor extends DcMotorImpl {
 	public SmartDcMotor(HardwareMap hwMap, String motorName, DcMotorSimple.Direction direction) {
 		super(hwMap.get(DcMotor.class, motorName).getController(), hwMap.get(DcMotor.class, motorName).getPortNumber());
 		establishForwardDirection(direction);
+
+	}
+
+	public SmartDcMotor(HardwareMap hwMap, String motorName, MotorType motorType, DefenderBot.MotorLocation motorLocation) {
+		super(hwMap.get(DcMotor.class, motorName).getController(), hwMap.get(DcMotor.class, motorName).getPortNumber());
+		establishForwardDirection(motorType, motorLocation);
 
 	}
 
@@ -64,6 +75,20 @@ public class SmartDcMotor extends DcMotorImpl {
 		}
 
 	}
+	public void establishForwardDirection(MotorType motorType, DefenderBot.MotorLocation motorLocation) {
+		if (motorType == MotorType.TORQUENADO) {
+			if (motorLocation == DefenderBot.MotorLocation.LEFT) {
+				forwardDirection = DcMotor.Direction.REVERSE;
+				reverseDirection = DcMotor.Direction.FORWARD;
+			} else if (motorLocation == DefenderBot.MotorLocation.RIGHT) {
+				forwardDirection = DcMotor.Direction.FORWARD;
+				reverseDirection = DcMotor.Direction.REVERSE;
+			}
+		}
+	}
+
+
+
 
 	// A convenience function to spin the motor forward CONCEPTUALLY (might not be forward physically)
 	public void setDirectionForward() {
