@@ -6,9 +6,20 @@ class ProductionTestConfiguration extends DefenderBotConfiguration {
 
 	public ProductionTestConfiguration() {
 		frontLeftMotorName 		= "FRONT LEFT MOTOR";
+		frontLeftMotorType		= SmartDcMotor.MotorType.TORQUENADO;
+		frontLeftMotorLocation	= DefenderBot.MotorLocation.LEFT;
+
 		frontRightMotorName		= "FRONT RIGHT MOTOR";
+		frontRightMotorType		= SmartDcMotor.MotorType.TORQUENADO;
+		frontRightMotorLocation	= DefenderBot.MotorLocation.RIGHT;
+
 		rearLeftMotorName		= "REAR LEFT MOTOR";
+		rearLeftMotorType		= SmartDcMotor.MotorType.TORQUENADO;
+		rearLeftMotorLocation	= DefenderBot.MotorLocation.LEFT;
+
 		rearRightMotorName		= "REAR RIGHT MOTOR";
+		rearRightMotorType		= SmartDcMotor.MotorType.TORQUENADO;
+		rearRightMotorLocation	= DefenderBot.MotorLocation.RIGHT;
 
 
 		/*
@@ -32,7 +43,7 @@ class ProductionTestConfiguration extends DefenderBotConfiguration {
 		grabMotorForwardDirection = DcMotor.Direction.REVERSE;
 		tiltMotorForwardDirection = DcMotor.Direction.FORWARD;
 
-		forwardSecondsPerInch	= 0.0571895424836602;
+		forwardSecondsPerInch	= 0.05; //carpet at home
 		sidewaysSecondsPerInch	= 0.0690476190476191;
 	}
 }
