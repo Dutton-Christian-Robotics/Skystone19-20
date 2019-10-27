@@ -34,14 +34,23 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import java.lang.Math;
 
 /**
  * This is NOT an opmode.
  *
  * This class can be used to define all the specific hardware for a single robot.
  */
-public class DefenderBot
-{
+public class DefenderBot {
+	public enum MotorLocation {
+		LEFT,
+		RIGHT,
+		FRONT,
+		REAR,
+		OTHER
+	}
+
+
     public SmartDcMotor frontLeftDrive = null;
     public SmartDcMotor frontRightDrive = null;
     public SmartDcMotor rearLeftDrive = null;
@@ -87,8 +96,13 @@ public class DefenderBot
 
 
 		liftMotor = new SmartDcMotor(hwMap, botConfiguration.liftMotorName, botConfiguration.liftMotorForwardDirection);
+		liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		extendMotor = new SmartDcMotor(hwMap, botConfiguration.extendMotorName, botConfiguration.extendMotorForwardDirection);
+		extendMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+		tiltMotor = new SmartDcMotor(hwMap, botConfiguration.tiltMotorName, botConfiguration.tiltMotorForwardDirection);
+		tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		grabMotor = new SmartDcMotor(hwMap, botConfiguration.grabMotorName, botConfiguration.grabMotorForwardDirection);
 
@@ -124,7 +138,7 @@ public class DefenderBot
 
     public void stopManipulatorMotors() {
 	    liftMotor.setPower(0);
-// 	    tiltMotor.setPower(0);
+	    tiltMotor.setPower(0);
 	    extendMotor.setPower(0);
 	    grabMotor.setPower(0);
     }
@@ -165,6 +179,33 @@ public class DefenderBot
 		rearLeftDrive.setPower(rearLeftPower);
 		rearRightDrive.setPower(rearRightPower);
     }
+
+    //--------------------------------------------------------------------------------------------
+
+	public void driveBasedOnMovementSettings(SimpleMovementSettings settings) {
+		if (settings.frontLeftDrive > 0) {
+			frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+		} else {
+			frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+		}
+		if (settings.rearLeftDrive > 0) {
+			rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+		} else {
+			rearLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+		}
+		if (settings.frontRightDrive > 0) {
+			frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+		} else {
+			frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+		}
+		if (settings.rearRightDrive > 0) {
+			rearRightDrive.setDirection(DcMotor.Direction.FORWARD);
+		} else {
+			rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
+		}
+		setDrivePower(Math.abs(settings.frontLeftDrive), Math.abs(settings.frontRightDrive), Math.abs(settings.rearLeftDrive), Math.abs(settings.rearRightDrive));
+	}
+
 
     //--------------------------------------------------------------------------------------------
 
@@ -212,52 +253,36 @@ public class DefenderBot
     //--------------------------------------------------------------------------------------------
 
     public void driveLeft(double frontLeftPower, double frontRightPower) {
-	    driveLeft(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
+	    driveLeft(Math.abs(frontLeftPower), Math.abs(frontRightPower), Math.abs(frontLeftPower), Math.abs(frontRightPower));
     }
     public void driveLeft(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
 	    driveLeft(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
 	}
     public void driveLeft(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
 
-		/*
-			Once we started programming the "real" bot we had a strange problem. After capturing the "physical"
-			forward direction for each wheel, we could get it to drive forward or backward fine. But when going
-			sideways or diagonal, the right-side wheels turned the wrong direction. Still trying to figure out why.
-			Until then, we bandaid the problem by switching which way we say we want to go.
-		*/
         frontLeftDrive.setDirectionReverse();
-//         frontRightDrive.setDirectionForward();
-        frontRightDrive.setDirectionReverse();
+        frontRightDrive.setDirectionForward();
         rearLeftDrive.setDirectionForward();
-//         rearRightDrive.setDirectionReverse();
-        rearRightDrive.setDirectionForward();
+        rearRightDrive.setDirectionReverse();
 
 	   setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
     }
 
     //--------------------------------------------------------------------------------------------
 
-    public void driveRight(double frontLeftPower, double frontRightPower) {
-	    driveRight(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
-    }
-    public void driveRight(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
-	    driveRight(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
+	public void driveRight(double frontLeftPower, double frontRightPower) {
+		driveRight(Math.abs(frontLeftPower), Math.abs(frontRightPower), Math.abs(frontLeftPower), Math.abs(frontRightPower));
+	}
+	public void driveRight(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
+		driveRight(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
 	}
 
 	public void driveRight(Double frontLeftPower, Double frontRightPower, Double rearLeftPower, Double rearRightPower) {
 
-		/*
-			Once we started programming the "real" bot we had a strange problem. After capturing the "physical"
-			forward direction for each wheel, we could get it to drive forward or backward fine. But when going
-			sideways or diagonal, the right-side wheels turned the wrong direction. Still trying to figure out why.
-			Until then, we bandaid the problem by switching which way we say we want to go.
-		*/
 		frontLeftDrive.setDirectionForward();
-//         frontRightDrive.setDirectionReverse();
-		frontRightDrive.setDirectionForward();
+		frontRightDrive.setDirectionReverse();
 		rearLeftDrive.setDirectionReverse();
-//         rearRightDrive.setDirectionForward();
-		rearRightDrive.setDirectionReverse();
+		rearRightDrive.setDirectionForward();
 
 		setDrivePower(frontLeftPower, frontRightPower, rearLeftPower, rearRightPower);
     }
@@ -266,7 +291,7 @@ public class DefenderBot
 
 
     public void turnClockwise(double frontLeftPower, double frontRightPower) {
-	    turnClockwise(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
+	    turnClockwise(Math.abs(frontLeftPower), Math.abs(frontRightPower), Math.abs(frontLeftPower), Math.abs(frontRightPower));
     }
     public void turnClockwise(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
 	    turnClockwise(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
@@ -287,7 +312,7 @@ public class DefenderBot
 
 
     public void turnCounterClockwise(double frontLeftPower, double frontRightPower) {
-	    turnCounterClockwise(frontLeftPower, frontRightPower, frontLeftPower, frontRightPower);
+	    turnCounterClockwise(Math.abs(frontLeftPower), Math.abs(frontRightPower), Math.abs(frontLeftPower), Math.abs(frontRightPower));
     }
     public void turnCounterClockwise(double frontLeftPower, double frontRightPower, double rearLeftPower, double rearRightPower) {
 	    turnCounterClockwise(new Double(frontLeftPower), new Double(frontRightPower), new Double(rearLeftPower), new Double(rearRightPower));
@@ -415,7 +440,14 @@ public class DefenderBot
 
     //--------------------------------------------------------------------------------------------
 
+    	public void stopLiftMotor() {
+	    	liftMotor.setPower(0);
+    	}
+
+    //--------------------------------------------------------------------------------------------
+
     	public void tiltArmUp(double power) {
+	    	power = Math.abs(power);
 	    	tiltMotor.setDirectionForward();
 	    	tiltMotor.setPower(power);
     	}
@@ -423,9 +455,17 @@ public class DefenderBot
     //--------------------------------------------------------------------------------------------
 
     	public void tiltArmDown(double power) {
+	    	power = Math.abs(power);
 	    	tiltMotor.setDirectionReverse();
 	    	tiltMotor.setPower(power);
     	}
+
+    //--------------------------------------------------------------------------------------------
+
+    	public void stopTiltMotor() {
+	    	tiltMotor.setPower(0);
+    	}
+
 
     //--------------------------------------------------------------------------------------------
 
@@ -443,6 +483,13 @@ public class DefenderBot
 
     //--------------------------------------------------------------------------------------------
 
+    	public void stopExtendMotor() {
+	    	extendMotor.setPower(0);
+    	}
+
+
+    //--------------------------------------------------------------------------------------------
+
     	public void grabBlock(double power) {
 	    	grabMotor.setDirectionForward();
 	    	grabMotor.setPower(power);
@@ -457,12 +504,30 @@ public class DefenderBot
 
     //--------------------------------------------------------------------------------------------
 
+    	public void stopGrabMotor() {
+	    	grabMotor.setPower(0);
+    	}
+
+
+    //--------------------------------------------------------------------------------------------
+
 
     public boolean isFrontTouching() {
 	    return false;
 // 	    return frontTouch.isPressed();
     }
 
+    //--------------------------------------------------------------------------------------------
+
+	public long millisecondsForDistanceForward(double inches) {
+		return Double.valueOf(forwardSecondsPerInch * inches * 1000).longValue();
+	}
+
+    //--------------------------------------------------------------------------------------------
+
+	public long millisecondsForDistanceSideways(double inches) {
+		return Double.valueOf(sidewaysSecondsPerInch * inches * 1000).longValue();
+	}
  }
 
 // ====================================================================================================
