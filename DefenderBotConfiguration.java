@@ -10,15 +10,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 abstract class DefenderBotConfiguration {
 	public String frontLeftMotorName = null;
+	public SmartDcMotor.MotorType frontLeftMotorType = null;
+	public DefenderBot.MotorLocation frontLeftMotorLocation = null;
 	public DcMotor.Direction frontLeftMotorForwardDirection = null;
 
 	public String frontRightMotorName = null;
+	public SmartDcMotor.MotorType frontRightMotorType = null;
+	public DefenderBot.MotorLocation frontRightMotorLocation = null;
 	public DcMotor.Direction frontRightMotorForwardDirection = null;
 
 	public String rearLeftMotorName = null;
+	public SmartDcMotor.MotorType rearLeftMotorType = null;
+	public DefenderBot.MotorLocation rearLeftMotorLocation = null;
 	public DcMotor.Direction rearLeftMotorForwardDirection = null;
 
 	public String rearRightMotorName = null;
+	public SmartDcMotor.MotorType rearRightMotorType = null;
+	public DefenderBot.MotorLocation rearRightMotorLocation = null;
 	public DcMotor.Direction rearRightMotorForwardDirection = null;
 
 
