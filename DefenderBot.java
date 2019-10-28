@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import java.lang.Math;
 
 /**
@@ -51,24 +52,33 @@ public class DefenderBot {
 	}
 
 
-    public SmartDcMotor frontLeftDrive = null;
-    public SmartDcMotor frontRightDrive = null;
-    public SmartDcMotor rearLeftDrive = null;
-    public SmartDcMotor rearRightDrive = null;
+	public SmartDcMotor frontLeftDrive = null;
+	public SmartDcMotor frontRightDrive = null;
+	public SmartDcMotor rearLeftDrive = null;
+	public SmartDcMotor rearRightDrive = null;
 
-    public SmartDcMotor liftMotor = null;
-    public SmartDcMotor tiltMotor = null;
-    public SmartDcMotor extendMotor = null;
-    public SmartDcMotor grabMotor = null;
+	public SmartDcMotor liftMotor = null;
+	public SmartDcMotor tiltMotor = null;
+	public SmartDcMotor extendMotor = null;
+	public SmartDcMotor grabMotor = null;
 
-//     public TouchSensor frontTouch = null;
+	//     public TouchSensor frontTouch = null;
 
-    private HardwareMap hwMap           = null;
-    private DefenderBotConfiguration botConfiguration 	= null;
-    private ElapsedTime period  = new ElapsedTime();
+	private HardwareMap hwMap           = null;
+	private DefenderBotConfiguration botConfiguration 	= null;
+	private ElapsedTime period  = new ElapsedTime();
 
-    public Double forwardSecondsPerInch = null;
-    public Double sidewaysSecondsPerInch = null;
+	public Double forwardSecondsPerInch = null;
+	public Double sidewaysSecondsPerInch = null;
+
+
+	public SimpleMovementSettings forwardMotion = new SimpleMovementSettings(-1, -1, 1, 1);
+	public SimpleMovementSettings reverseMotion = new SimpleMovementSettings(1, 1, -1, -1);
+	public SimpleMovementSettings turnRightMotion = new SimpleMovementSettings(-1, -1, -1, -1);
+	public SimpleMovementSettings turnLeftMotion = new SimpleMovementSettings(1, 1, 1, 1);
+	public SimpleMovementSettings stopMotion = new SimpleMovementSettings(0, 0, 0, 0);
+
+
 
     public DefenderBot() {
 
