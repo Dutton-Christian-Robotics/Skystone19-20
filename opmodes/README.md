@@ -1,0 +1,2 @@
+# About the "opmodes" folder
+Organization is just a good idea. Since the robot design period generates so many files--including so many opmodes that have limited use. Note the use of subfolders to capture particular types of opmodes.
