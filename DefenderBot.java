@@ -35,6 +35,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
+
 import java.lang.Math;
 
 /**
@@ -62,6 +72,8 @@ public class DefenderBot {
 	public SmartDcMotor extendMotor = null;
 	public SmartDcMotor grabMotor = null;
 
+	public BNO055IMU imu = null;
+
 	//     public TouchSensor frontTouch = null;
 
 	private HardwareMap hwMap           = null;
@@ -78,6 +90,10 @@ public class DefenderBot {
 	public SimpleMovementSettings turnLeftMotion = new SimpleMovementSettings(1, 1, 1, 1);
 	public SimpleMovementSettings stopMotion = new SimpleMovementSettings(0, 0, 0, 0);
 
+	public SimpleMovementSettings diagonalForwardLeftMotion = new SimpleMovementSettings(0, -1, 1, 0);
+	public SimpleMovementSettings diagonalForwardRightMotion = new SimpleMovementSettings(-1, 0, 0, 1);
+	public SimpleMovementSettings diagonalReverseLeftMotion = new SimpleMovementSettings(1, 0, 0, -1);
+	public SimpleMovementSettings diagonalReverseRightMotion = new SimpleMovementSettings(0, 1, -1, 0);
 
 
     public DefenderBot() {
@@ -88,6 +104,9 @@ public class DefenderBot {
 		// Save reference to Hardware map and config file
 		hwMap = ahwMap;
 		botConfiguration = botConfig;
+
+		imu = hwMap.get(BNO055IMU.class, "imu");
+
 
 		// Define and Initialize Motors and timing using config file
 		// Using the SmartDcMotor class allows us to separate out the CONCEPTUAL direction we want
@@ -134,6 +153,18 @@ public class DefenderBot {
 //        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
+
+    //--------------------------------------------------------------------------------------------
+
+    public void calibrateIMU() {
+		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+		parameters.mode                = BNO055IMU.SensorMode.IMU;
+		parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+		parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+		parameters.loggingEnabled      = false;
+		imu.initialize(parameters);
+    }
+
 
     //--------------------------------------------------------------------------------------------
 
@@ -537,6 +568,26 @@ public class DefenderBot {
 
 	public long millisecondsForDistanceSideways(double inches) {
 		return Double.valueOf(sidewaysSecondsPerInch * inches * 1000).longValue();
+	}
+
+    //--------------------------------------------------------------------------------------------
+
+	public boolean isInMotionAccordingToImu() {
+		double threshold = 1;
+		AngularVelocity omegas = imu.getAngularVelocity();
+		omegas.toAngleUnit(AngleUnit.DEGREES);
+
+		return (Math.abs(omegas.xRotationRate) > threshold) || (Math.abs(omegas.yRotationRate) > threshold) || (Math.abs(omegas.zRotationRate) > threshold);
+	}
+
+    //--------------------------------------------------------------------------------------------
+
+	public boolean isNotMovingAccordingToImu3Axes() {
+		double threshold = 1;
+		AngularVelocity omegas = imu.getAngularVelocity();
+		omegas.toAngleUnit(AngleUnit.DEGREES);
+
+		return (Math.abs(omegas.xRotationRate) < threshold) && (Math.abs(omegas.yRotationRate) < threshold) && (Math.abs(omegas.zRotationRate) < threshold);
 	}
  }
 
