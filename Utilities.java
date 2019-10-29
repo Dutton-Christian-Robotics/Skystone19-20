@@ -28,6 +28,39 @@ public class Main
 }
 */
 
+/**
+ * Debouncing is an important for when you want to "throttle" how often a given block of code can be called.
+ * In many instances there may be bad consequences from running a block of code too quickly after it has
+ * already been run. Debouncing "wraps" a block of code so that instead of calling the code, you call the
+ * debouncer. The debouncer keeps a running timer of when it was last called--meaning that it should or should
+ * not be called again.
+ *
+ * Java doesn't have great syntax for how to do this kind of thing. The Callable interface works but is ugly.
+ * Ideally, I'd like to get us to the point of being able to use Java 9, which has anonymous lambda functions.
+ * These look a lot cleaner.
+ */
+class Debouncer {
+	public long timeout;
+	private ElapsedTime timer;
+	private Callable codeBlock;
+	private boolean isFirstRun = true;
+
+	public Debouncer(long t, Callable<Void> block) {
+		timeout = t;
+		timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+		timer.reset();
+		codeBlock = block;
+	}
+
+	public void run() throws Exception {
+		if (isFirstRun || (timer.time() > timeout)) {
+			isFirstRun = false;
+			codeBlock.call();
+			timer.reset();
+		}
+	}
+}
+
 class BreakableLoop {
 	private ArrayList<BooleanTripwire> breaks = null;
 	private Callable codeBlock = null;
