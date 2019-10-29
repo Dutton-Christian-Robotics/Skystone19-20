@@ -6,7 +6,7 @@ import java.lang.Math;
 /**
  * This class id designed to help facilitate complex motions, such as moving forward and turning at the same time.
  * Essentially the class consists of four properties, a power setting for each of the four drive wheels. Unlike
- * other places in the code, here power is treated as -1 to 1. This allows us to capure capture the required wheel
+ * other places in the code, here power is treated as -1 to 1. This allows us to capture the required wheel
  * movements with one value--power--instead of a 0-1 power and a direction name (forward or reverse).
  *
  * The expectaion is that most times this class would have values of -1, 0, or 1 for the values. A "scale" method
@@ -14,6 +14,8 @@ import java.lang.Math;
  *
  * The combine functions attempt to blend the drive power requirements for two different movement types, resulting in
  * a new hybrid movement--such as turning while moving forward.
+ *
+ * NOTE: The name of this class might change in the future to something more elegant or better suited.
  *
  */
 
