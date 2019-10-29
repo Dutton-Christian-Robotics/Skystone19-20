@@ -468,6 +468,7 @@ public class DefenderBot {
     //--------------------------------------------------------------------------------------------
 
     	public void moveLiftUp(double power) {
+	    	power = Math.abs(power);
 	    	liftMotor.setDirectionForward();
 	    	liftMotor.setPower(power);
     	}
@@ -475,6 +476,7 @@ public class DefenderBot {
     //--------------------------------------------------------------------------------------------
 
     	public void moveLiftDown(double power) {
+	    	power = Math.abs(power);
 	    	liftMotor.setDirectionReverse();
 	    	liftMotor.setPower(power);
     	}
@@ -511,6 +513,7 @@ public class DefenderBot {
     //--------------------------------------------------------------------------------------------
 
     	public void extendArm(double power) {
+	    	power = Math.abs(power);
 	    	extendMotor.setDirectionForward();
 	    	extendMotor.setPower(power);
     	}
@@ -518,6 +521,7 @@ public class DefenderBot {
     //--------------------------------------------------------------------------------------------
 
     	public void retractArm(double power) {
+	    	power = Math.abs(power);
 	    	extendMotor.setDirectionReverse();
 	    	extendMotor.setPower(power);
     	}
@@ -532,6 +536,7 @@ public class DefenderBot {
     //--------------------------------------------------------------------------------------------
 
     	public void grabBlock(double power) {
+	    	power = Math.abs(power);
 	    	grabMotor.setDirectionForward();
 	    	grabMotor.setPower(power);
     	}
@@ -539,6 +544,7 @@ public class DefenderBot {
     //--------------------------------------------------------------------------------------------
 
     	public void releaseBlock(double power) {
+	    	power = Math.abs(power);
 	    	grabMotor.setDirectionReverse();
 	    	grabMotor.setPower(power);
     	}
