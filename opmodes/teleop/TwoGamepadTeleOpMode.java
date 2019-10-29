@@ -36,6 +36,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import java.util.concurrent.Callable;
+import java.util.*;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -128,7 +130,7 @@ public class TwoGamepadTeleOpMode extends OpMode {
 
 		// Drive sideways to the left
 		} else if (gamepad1.left_trigger > 0) {
-			bot.driveLeft(gamepad1.left_trigger, gamepad1.left_trigger);
+			bot.driveLeft(gamepad1.left_trigger * driveScaleFactor, gamepad1.left_trigger * driveScaleFactor);
 
 		// Drive sideways to the right
 		} else if (gamepad1.right_trigger > 0) {
@@ -232,7 +234,7 @@ public class TwoGamepadTeleOpMode extends OpMode {
 			bot.grabBlock(1);
 		} else if (gamepad2.dpad_down) {
 			bot.releaseBlock(1);
-		} else if ((gamepad2.dpad_left > 0) || (gamepad2.dpad_right > 0)) {
+		} else if (gamepad2.dpad_left || gamepad2.dpad_right) {
 			bot.stopGrabMotor();
 		}
 

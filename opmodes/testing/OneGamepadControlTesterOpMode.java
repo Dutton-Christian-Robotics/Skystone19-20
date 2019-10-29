@@ -36,6 +36,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import java.util.concurrent.Callable;
+import java.util.*;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -122,7 +124,7 @@ public class OneGamepadControlTesterOpMode extends OpMode {
 			productionBot.stopAllMotors();
 
 		} else if (gamepad1.left_trigger > 0) {
-			productionBot.driveLeft(gamepad1.left_trigger, gamepad1.left_trigger);
+			productionBot.driveLeft(gamepad1.left_trigger * driveScaleFactor, gamepad1.left_trigger * driveScaleFactor);
 
 		} else if (gamepad1.right_trigger > 0) {
 			productionBot.driveRight(gamepad1.right_trigger * driveScaleFactor, gamepad1.right_trigger * driveScaleFactor);
