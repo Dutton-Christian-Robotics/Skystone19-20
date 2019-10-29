@@ -50,7 +50,7 @@ import java.util.Random;
 /**
  * This op mode is currently used for testing functionality *
  */
-@Autonomous(name="Test: IMU", group="Linear Opmode")
+@Autonomous(name="Testing: IMU", group="Linear Opmode")
 
 public class TestImuLinearOpMode extends LinearOpMode {
 

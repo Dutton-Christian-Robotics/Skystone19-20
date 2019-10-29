@@ -42,13 +42,14 @@ import java.util.Random;
 /**
  * This op mode is currently used for testing functionality *
  */
-@Autonomous(name="Basic: Production Drive Test Linear OpMode", group="Linear Opmode")
+@Autonomous(name="Testing: (not used)", group="Linear Opmode")
 
-public class ProductionDriveTesterLinear extends LinearOpMode {
+public class TestAutonomousLinearOpMode extends LinearOpMode {
 
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DefenderBot productionBot = new DefenderBot();
+	private ElapsedTime runtime = new ElapsedTime();
+	private DefenderBot productionBot = new DefenderBot();
+
+	SimpleMovementSettings forwardMotion = new SimpleMovementSettings(-1, -1, 1, 1);
 
     // This method is not perfect yet. Ideally should be broken out into a separate interface or a DefenderBot method.
     // Need to add ability to break on sensor input, ideally we pass allow an array of functions/methods to be passed
@@ -67,9 +68,34 @@ public class ProductionDriveTesterLinear extends LinearOpMode {
 		telemetry.addData("Status", "Initialized");
 		telemetry.update();
 
+/*
+		productionBot.calibrateIMU();
+
+		while (!isStopRequested() && !productionBot.imu.isGyroCalibrated()) {
+			sleep(50);
+			idle();
+		}
+*/
+
 		// Wait for the game to start (driver presses PLAY)
 		waitForStart();
 		runtime.reset();
+
+/*
+		while (opModeIsActive()) {
+			Orientation orientation = productionBot.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+			telemetry.addData("X Axis", orientation.firstAngle);
+			telemetry.addData("Y Axis", orientation.secondAngle);
+			telemetry.addData("Z Axis", orientation.thirdAngle);
+			telemetry.update();
+
+		}
+*/
+
+/*
+		productionBot.driveBasedOnMovementSettings(forwardMotion.scale(0.5));
+		sleep(productionBot.millisecondsForDistanceForward(36));
+*/
 
 
 /*
@@ -85,6 +111,7 @@ public class ProductionDriveTesterLinear extends LinearOpMode {
        sleep(1500);
 */
 
+/*
 		Random rand = new Random();
 		while (opModeIsActive()) {
 		   if (productionBot.isFrontTouching()) {
@@ -106,6 +133,7 @@ public class ProductionDriveTesterLinear extends LinearOpMode {
 		   }
 		   productionBot.driveForward(0.5, 0.5);
 	   }
+*/
 // 	   productionBot.driveBackward(0.5,0.5);
 
         // run until the end of the match (driver presses STOP)
