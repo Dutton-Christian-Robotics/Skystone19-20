@@ -67,11 +67,11 @@ public class AutonomousLeftOneOpMode extends LinearOpMode {
 
 		// drive a little bit more left
 		bot.driveLeft(0.5, 0.5);
-		sleep(1200);
+		sleep(800);
 
 		// drive forward to the edge of the building platform
 		bot.driveForward(0.25, 0.25);
-		sleep(2000);
+		sleep(1700);
 		bot.stopDriveMotors();
 
 		// extend the grabber arm
@@ -86,7 +86,7 @@ public class AutonomousLeftOneOpMode extends LinearOpMode {
 
 		// pull the platform backwards
 		bot.driveBackward(0.5, 0.5);
-		sleep(2400);
+		sleep(2200);
 		bot.stopDriveMotors();
 
 		// release the platform
@@ -96,7 +96,7 @@ public class AutonomousLeftOneOpMode extends LinearOpMode {
 
 		// retract the arm--I think it helps us maneuver better
 		bot.retractArm(0.5);
-		sleep(3500);
+		sleep(1300);
 		bot.stopExtendMotor();
 
 
@@ -106,11 +106,11 @@ public class AutonomousLeftOneOpMode extends LinearOpMode {
 
 		// get away from the wall a bit
 		bot.driveForward(0.5, 0.5);
-		sleep(500);
+		sleep(800);
 
 		// rive to the mid-field line
 		bot.driveRight(0.5, 0.5);
-		sleep(1800);
+		sleep(1100);
 
 
     }
