@@ -59,7 +59,9 @@ public class TwoGamepadTeleOpMode extends OpMode {
 	private ElapsedTime runtime = new ElapsedTime();
 	private DefenderBot bot = new DefenderBot();
 	private double driveScaleFactor = 1;
+	private double manipulatorScaleFactor = 1;
 	private Debouncer decreaseDriveScaleFactorDebouncer;
+	private Debouncer decreaseManipulatorScaleFactorDebouncer;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -85,10 +87,17 @@ public class TwoGamepadTeleOpMode extends OpMode {
 	@Override
 	public void start() {
 		runtime.reset();
-		decreaseDriveScaleFactorDebouncer = new Debouncer(200, new Callable<Void>() {
+		decreaseDriveScaleFactorDebouncer = new Debouncer(400, new Callable<Void>() {
 			@Override
 			public Void call() {
 				driveScaleFactor -= 0.25;
+				return null;
+			}
+		});
+		decreaseManipulatorScaleFactorDebouncer = new Debouncer(400, new Callable<Void>() {
+			@Override
+			public Void call() {
+				manipulatorScaleFactor -= 0.25;
 				return null;
 			}
 		});
@@ -122,6 +131,20 @@ public class TwoGamepadTeleOpMode extends OpMode {
 			}
 		} else if (gamepad1.right_bumper) {
 			driveScaleFactor = 1;
+		}
+		if (gamepad2.left_bumper) {
+			try {
+				// testing shows that the loop runs so fast that a single press and release of the button is read multiple times.
+				// I'm using a Debouncer object to throttle how often it can be called.
+				decreaseManipulatorScaleFactorDebouncer.run();
+			} catch (Exception e) {
+
+			}
+			if (manipulatorScaleFactor < 0.25) {
+				manipulatorScaleFactor = 0.25;
+			}
+		} else if (gamepad2.right_bumper) {
+			manipulatorScaleFactor = 1;
 		}
 
 		// Emergency stop. Before all other conditions to ensure it takes precedent.
@@ -202,18 +225,18 @@ public class TwoGamepadTeleOpMode extends OpMode {
 
 		// Tilt manipulator arm up and down with gamepad 2 right stick Y
 		if (gp2_rightStickY > 0) {
-			bot.tiltArmUp(gp2_rightStickY);
+			bot.tiltArmUp(gp2_rightStickY * manipulatorScaleFactor);
 		} else if (gp2_rightStickY < 0) {
-			bot.tiltArmDown(gp2_rightStickY);
+			bot.tiltArmDown(gp2_rightStickY * manipulatorScaleFactor);
 		} else {
 			bot.stopTiltMotor();
 		}
 
 		// Raise manipulator arm up and down with gamepad 2 left stick Y
 		if (gp2_leftStickY > 0) {
-			bot.moveLiftUp(gp2_leftStickY);
+			bot.moveLiftUp(gp2_leftStickY * manipulatorScaleFactor);
 		} else if (gp2_leftStickY < 0) {
-			bot.moveLiftDown(gp2_leftStickY);
+			bot.moveLiftDown(gp2_leftStickY * manipulatorScaleFactor);
 		} else {
 			bot.stopLiftMotor();
 		}
@@ -221,9 +244,9 @@ public class TwoGamepadTeleOpMode extends OpMode {
 
 		// Extend manipulator arm up and down with gamepad 2 right and left trigger
 		if (gamepad2.right_trigger > 0) {
-			bot.extendArm(gamepad2.right_trigger);
+			bot.extendArm(gamepad2.right_trigger * manipulatorScaleFactor);
 		} else if (gamepad2.left_trigger > 0) {
-			bot.retractArm(gamepad2.left_trigger);
+			bot.retractArm(gamepad2.left_trigger * manipulatorScaleFactor);
 		} else {
 			bot.stopExtendMotor();
 		}
@@ -231,9 +254,9 @@ public class TwoGamepadTeleOpMode extends OpMode {
 
 		// Control grab wheels with gamepad 2 dpad--up and down, with L/R stopping the moter
 		if (gamepad2.dpad_up) {
-			bot.grabBlock(1);
+			bot.grabBlock(manipulatorScaleFactor);
 		} else if (gamepad2.dpad_down) {
-			bot.releaseBlock(1);
+			bot.releaseBlock(manipulatorScaleFactor);
 		} else if (gamepad2.dpad_left || gamepad2.dpad_right) {
 			bot.stopGrabMotor();
 		}
@@ -241,9 +264,12 @@ public class TwoGamepadTeleOpMode extends OpMode {
 
 		telemetry.addData("Status", "Run Time: " + runtime.toString());
 		telemetry.addData("Drive Scale", "%.2f", driveScaleFactor);
+		telemetry.addData("Manipulator Scale", "%.2f", manipulatorScaleFactor);
+/*
 		telemetry.addData("Lift Position", "%d", bot.liftMotor.getCurrentPosition());
 		telemetry.addData("Tilt Position", "%d", bot.tiltMotor.getCurrentPosition());
 		telemetry.addData("Extend Position", "%d", bot.extendMotor.getCurrentPosition());
+*/
 
 	}
 
