@@ -67,19 +67,23 @@ public class AutonomousBlueFourOpMode extends LinearOpMode {
 
 		// begin driving forward while arm is going up
 		bot.driveForward(0.5, 0.5);
+		sleep(800);
 
-		sleep(600);
 		bot.stopLiftMotor();
 		sleep(200);
+
 		bot.stopExtendMotor();
 		sleep(1200);
+
 		bot.stopDriveMotors();
 
 		bot.moveLiftDown(0.75);
 		bot.grabBlock(1);
 		sleep(600);
+
 		bot.retractArm(0.75);
 		sleep(400);
+
 		bot.stopGrabMotor();
 		bot.stopExtendMotor();
 		bot.stopLiftMotor();

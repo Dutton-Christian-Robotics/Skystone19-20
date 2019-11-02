@@ -42,7 +42,7 @@ import java.util.Random;
 /**
  * This op mode is currently used for testing functionality *
  */
-@Autonomous(name="Beta: Autonomous Blue 1", group="Linear Opmode")
+@Autonomous(name="Game: Autonomous Blue 1", group="Linear Opmode")
 
 public class AutonomousBlueOneOpMode extends LinearOpMode {
 
@@ -85,8 +85,8 @@ public class AutonomousBlueOneOpMode extends LinearOpMode {
 		bot.stopTiltMotor();
 
 		// pull the platform backwards
-		bot.driveBackward(0.2, 0.2);
-		sleep(7500);
+		bot.driveBackward(0.5, 0.5);
+		sleep(3100);
 		bot.stopDriveMotors();
 
 		// release the platform
@@ -96,7 +96,7 @@ public class AutonomousBlueOneOpMode extends LinearOpMode {
 
 		// retract the arm--I think it helps us maneuver better
 		bot.retractArm(0.5);
-		sleep(1300);
+		sleep(1500);
 		bot.stopExtendMotor();
 
 

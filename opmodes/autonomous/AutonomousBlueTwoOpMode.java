@@ -42,7 +42,7 @@ import java.util.Random;
 /**
  * This op mode is currently used for testing functionality *
  */
-@Autonomous(name="Beta: Autonomous Blue 2", group="Linear Opmode")
+@Autonomous(name="Game: Autonomous Blue 2", group="Linear Opmode")
 
 public class AutonomousBlueTwoOpMode extends LinearOpMode {
 

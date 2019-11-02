@@ -42,7 +42,7 @@ import java.util.Random;
 /**
  * This op mode is currently used for testing functionality *
  */
-@Autonomous(name="Beta: Autonomous Blue 3", group="Linear Opmode")
+@Autonomous(name="Game: Autonomous Blue 3", group="Linear Opmode")
 
 public class AutonomousBlueThreeOpMode extends LinearOpMode {
 
@@ -68,7 +68,7 @@ public class AutonomousBlueThreeOpMode extends LinearOpMode {
 		// begin driving forward while arm is going up
 		bot.driveForward(0.5, 0.5);
 
-		sleep(600);
+		sleep(850);
 		bot.stopLiftMotor();
 		sleep(200);
 		bot.stopExtendMotor();
@@ -88,19 +88,21 @@ public class AutonomousBlueThreeOpMode extends LinearOpMode {
 		bot.turnCounterClockwise(0.5, 0.5);
 		sleep(900);
 		bot.driveForward(0.5, 0.5);
-		sleep(1000);
-
+		sleep(1400);
 		bot.stopDriveMotors();
+
 		bot.moveLiftUp(1);
-		sleep(600);
+		sleep(800);
 		bot.stopLiftMotor();
+
 
 		bot.driveBackward(0.5, 0.5);
-		sleep(1200);
-		bot.stopDriveMotors();
-		bot.moveLiftDown(0.5);
-		sleep(400);
+		sleep(200);
+		bot.moveLiftDown(0.75);
+		sleep(300);
 		bot.stopLiftMotor();
+		sleep(600);
+		bot.stopDriveMotors();
 
     }
 }
