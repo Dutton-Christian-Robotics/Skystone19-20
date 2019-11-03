@@ -76,13 +76,18 @@ public class AutonomousBlueOneOpMode extends LinearOpMode {
 
 		// extend the grabber arm
 		bot.extendArm(1);
-		sleep(2000);
+		sleep(1700);
 		bot.stopExtendMotor();
 
 		// lower the arm to grab the platform
 		bot.tiltArmDown(0.25);
-		sleep(800);
+		sleep(700);
 		bot.stopTiltMotor();
+
+
+		bot.retractArm(0.5);
+		sleep(300);
+		bot.stopExtendMotor();
 
 		// pull the platform backwards
 		bot.driveBackward(0.5, 0.5);
@@ -110,7 +115,7 @@ public class AutonomousBlueOneOpMode extends LinearOpMode {
 
 		// rive to the mid-field line
 		bot.driveRight(0.5, 0.5);
-		sleep(1100);
+		sleep(1400);
 
 
     }
