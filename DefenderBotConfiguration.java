@@ -45,6 +45,8 @@ abstract class DefenderBotConfiguration {
 	public Double forwardSecondsPerInch = null;
 	public Double sidewaysSecondsPerInch = null;
 
+	public InternalGyroscopeService.Axis headingAxis = null;
+
 	/*
 		Not used currently, this is a convenience method that could let us setup our motors with less duplication of code,
 		such as by iterating through an array of motor names.
