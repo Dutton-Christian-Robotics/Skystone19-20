@@ -45,5 +45,8 @@ class ProductionTestConfiguration extends DefenderBotConfiguration {
 
 		forwardSecondsPerInch	= 0.05; //carpet at home
 		sidewaysSecondsPerInch	= 0.0690476190476191;
+
+		headingAxis = InternalGyroscopeService.Axis.Z;
+
 	}
 }
