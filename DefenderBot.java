@@ -50,7 +50,8 @@ import java.lang.Math;
 /**
  * This is NOT an opmode.
  *
- * This class can be used to define all the specific hardware for a single robot.
+ * This class can be used to define the basic hardware for a single robot, focused on drivetrain.
+ * Specific manipulator functionality should be added in a subclass.
  */
 public class DefenderBot {
 	public enum MotorLocation {
@@ -67,17 +68,16 @@ public class DefenderBot {
 	public SmartDcMotor rearLeftDrive = null;
 	public SmartDcMotor rearRightDrive = null;
 
-	public SmartDcMotor liftMotor = null;
-	public SmartDcMotor tiltMotor = null;
-	public SmartDcMotor extendMotor = null;
-	public SmartDcMotor grabMotor = null;
 
 	public BNO055IMU imu = null;
+	public InternalGyroscopeService internalGyroscopeService = null;
+	private Thread internalGyroscopeServiceThread = null;
+
 
 	//     public TouchSensor frontTouch = null;
 
-	private HardwareMap hwMap           = null;
-	private DefenderBotConfiguration botConfiguration 	= null;
+	protected HardwareMap hwMap           = null;
+	protected DefenderBotConfiguration botConfiguration 	= null;
 	private ElapsedTime period  = new ElapsedTime();
 
 	public Double forwardSecondsPerInch = null;
@@ -96,9 +96,8 @@ public class DefenderBot {
 	public SimpleMovementSettings diagonalReverseRightMotion = new SimpleMovementSettings(0, 1, -1, 0);
 
 
-    public DefenderBot() {
-
-    }
+	public DefenderBot() {
+	}
 
     public void init(HardwareMap ahwMap, DefenderBotConfiguration botConfig) {
 		// Save reference to Hardware map and config file
@@ -106,6 +105,12 @@ public class DefenderBot {
 		botConfiguration = botConfig;
 
 		imu = hwMap.get(BNO055IMU.class, "imu");
+		internalGyroscopeService = new InternalGyroscopeService(imu, 250, botConfiguration.headingAxis);
+		calibrateIMU();
+		internalGyroscopeServiceThread = new Thread(internalGyroscopeService);
+		internalGyroscopeServiceThread.start();
+
+
 
 
 		// Define and Initialize Motors and timing using config file
@@ -121,19 +126,6 @@ public class DefenderBot {
 		rearLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		rearRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-
-
-
-		liftMotor = new SmartDcMotor(hwMap, botConfiguration.liftMotorName, botConfiguration.liftMotorForwardDirection);
-		liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-		extendMotor = new SmartDcMotor(hwMap, botConfiguration.extendMotorName, botConfiguration.extendMotorForwardDirection);
-		extendMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-		tiltMotor = new SmartDcMotor(hwMap, botConfiguration.tiltMotorName, botConfiguration.tiltMotorForwardDirection);
-		tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-		grabMotor = new SmartDcMotor(hwMap, botConfiguration.grabMotorName, botConfiguration.grabMotorForwardDirection);
 
 		forwardSecondsPerInch = botConfiguration.forwardSecondsPerInch;
 		sidewaysSecondsPerInch = botConfiguration.sidewaysSecondsPerInch;
@@ -175,20 +167,11 @@ public class DefenderBot {
 		rearRightDrive.setPower(0);
     }
 
-    //--------------------------------------------------------------------------------------------
-
-    public void stopManipulatorMotors() {
-	    liftMotor.setPower(0);
-	    tiltMotor.setPower(0);
-	    extendMotor.setPower(0);
-	    grabMotor.setPower(0);
-    }
 
     //--------------------------------------------------------------------------------------------
 
     public void stopAllMotors() {
 		stopDriveMotors();
-		stopManipulatorMotors();
     }
 
     //--------------------------------------------------------------------------------------------
@@ -465,96 +448,6 @@ public class DefenderBot {
 
     }
 
-    //--------------------------------------------------------------------------------------------
-
-    	public void moveLiftUp(double power) {
-	    	power = Math.abs(power);
-	    	liftMotor.setDirectionForward();
-	    	liftMotor.setPower(power);
-    	}
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void moveLiftDown(double power) {
-	    	power = Math.abs(power);
-	    	liftMotor.setDirectionReverse();
-	    	liftMotor.setPower(power);
-    	}
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void stopLiftMotor() {
-	    	liftMotor.setPower(0);
-    	}
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void tiltArmUp(double power) {
-	    	power = Math.abs(power);
-	    	tiltMotor.setDirectionForward();
-	    	tiltMotor.setPower(power);
-    	}
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void tiltArmDown(double power) {
-	    	power = Math.abs(power);
-	    	tiltMotor.setDirectionReverse();
-	    	tiltMotor.setPower(power);
-    	}
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void stopTiltMotor() {
-	    	tiltMotor.setPower(0);
-    	}
-
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void extendArm(double power) {
-	    	power = Math.abs(power);
-	    	extendMotor.setDirectionForward();
-	    	extendMotor.setPower(power);
-    	}
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void retractArm(double power) {
-	    	power = Math.abs(power);
-	    	extendMotor.setDirectionReverse();
-	    	extendMotor.setPower(power);
-    	}
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void stopExtendMotor() {
-	    	extendMotor.setPower(0);
-    	}
-
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void grabBlock(double power) {
-	    	power = Math.abs(power);
-	    	grabMotor.setDirectionForward();
-	    	grabMotor.setPower(power);
-    	}
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void releaseBlock(double power) {
-	    	power = Math.abs(power);
-	    	grabMotor.setDirectionReverse();
-	    	grabMotor.setPower(power);
-    	}
-
-    //--------------------------------------------------------------------------------------------
-
-    	public void stopGrabMotor() {
-	    	grabMotor.setPower(0);
-    	}
-
 
     //--------------------------------------------------------------------------------------------
 
@@ -594,6 +487,12 @@ public class DefenderBot {
 		omegas.toAngleUnit(AngleUnit.DEGREES);
 
 		return (Math.abs(omegas.xRotationRate) < threshold) && (Math.abs(omegas.yRotationRate) < threshold) && (Math.abs(omegas.zRotationRate) < threshold);
+	}
+
+    //--------------------------------------------------------------------------------------------
+
+	public void shutdown() {
+		internalGyroscopeService.stop();
 	}
  }
 
