@@ -20,7 +20,7 @@ import java.lang.Math;
  *
  */
 
-public class SimpleMovementSettings {
+public class SimpleMovementSettings extends SimpleSettings {
 
 	public double frontLeftDrive = 0;
 	public double rearLeftDrive = 0;
@@ -56,12 +56,13 @@ public class SimpleMovementSettings {
 	}
 
 
-
+	@Override
 	public SimpleMovementSettings clone() {
 		SimpleMovementSettings resultingMovementSettings = new SimpleMovementSettings(frontLeftDrive, rearLeftDrive, frontRightDrive, rearRightDrive);
 		return resultingMovementSettings;
 	}
 
+	@Override
 	public SimpleMovementSettings scale(double scalePercentage) {
 		scalePercentage = Math.abs(scalePercentage);
 		SimpleMovementSettings resultingMovementSettings = clone();
@@ -72,6 +73,7 @@ public class SimpleMovementSettings {
 		return resultingMovementSettings;
 	}
 
+	@Override
 	public String toString() {
 		return String.format("FL: %.2f | RL: %.2f | FR: %.2f | RR: %.2f", frontLeftDrive, rearLeftDrive, frontRightDrive, rearRightDrive);
 	}
