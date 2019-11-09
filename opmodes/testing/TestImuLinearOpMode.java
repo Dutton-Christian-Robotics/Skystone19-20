@@ -51,7 +51,7 @@ import java.util.Random;
  * This op mode is currently used for testing functionality *
  */
 @Autonomous(name="Testing: IMU", group="Linear Opmode")
-
+@Disabled
 public class TestImuLinearOpMode extends LinearOpMode {
 
 	private ElapsedTime runtime = new ElapsedTime();
