@@ -7,6 +7,7 @@
 
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 abstract class DefenderBotConfiguration {
 	public String frontLeftMotorName = null;
@@ -41,11 +42,29 @@ abstract class DefenderBotConfiguration {
 
 	public String grabMotorName = null;
 	public DcMotor.Direction grabMotorForwardDirection = null;
+	public int grabMotorPower = 0;
+	public int capturePosition = 0;
+	public int releasePosition = 0;
+	public int resetPosition = 0;
+
+
+
+
+	public String leftFoundationGrabberServoName = null;
+	public Servo.Direction leftFoundationGrabberServoDirection = null;
+
+	public String rightFoundationGrabberServoName = null;
+	public Servo.Direction rightFoundationGrabberServoDirection = null;
+
+
+
 
 	public Double forwardSecondsPerInch = null;
 	public Double sidewaysSecondsPerInch = null;
 
 	public InternalGyroscopeService.Axis headingAxis = null;
+
+	public String vuforiaKey = null;
 
 	/*
 		Not used currently, this is a convenience method that could let us setup our motors with less duplication of code,
