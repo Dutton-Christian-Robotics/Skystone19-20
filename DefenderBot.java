@@ -68,7 +68,6 @@ public class DefenderBot {
 	public SmartDcMotor rearLeftDrive = null;
 	public SmartDcMotor rearRightDrive = null;
 
-
 	public BNO055IMU imu = null;
 	public InternalGyroscopeService internalGyroscopeService = null;
 	private Thread internalGyroscopeServiceThread = null;
@@ -99,16 +98,12 @@ public class DefenderBot {
 	public DefenderBot() {
 	}
 
-    public void init(HardwareMap ahwMap, DefenderBotConfiguration botConfig) {
+	public void init(HardwareMap ahwMap, DefenderBotConfiguration botConfig) {
 		// Save reference to Hardware map and config file
 		hwMap = ahwMap;
 		botConfiguration = botConfig;
 
 		imu = hwMap.get(BNO055IMU.class, "imu");
-		internalGyroscopeService = new InternalGyroscopeService(imu, 250, botConfiguration.headingAxis);
-		calibrateIMU();
-		internalGyroscopeServiceThread = new Thread(internalGyroscopeService);
-		internalGyroscopeServiceThread.start();
 
 
 
@@ -132,18 +127,25 @@ public class DefenderBot {
 
 
 
+
+
 // 		frontTouch = hwMap.get(TouchSensor.class, "front touch");
 
 
 		// Set all motors to zero power
-		stopAllMotors();
+		stopDriveMotors();
 
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-//        leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+    }
+
+    //--------------------------------------------------------------------------------------------
+
+    public void activateInternalGyroscopeService() {
+		internalGyroscopeService = new InternalGyroscopeService(imu, 250, botConfiguration.headingAxis);
+
+		calibrateIMU();
+		internalGyroscopeServiceThread = new Thread(internalGyroscopeService);
+		internalGyroscopeServiceThread.start();
     }
 
     //--------------------------------------------------------------------------------------------
@@ -471,6 +473,7 @@ public class DefenderBot {
 
     //--------------------------------------------------------------------------------------------
 
+/*
 	public boolean isInMotionAccordingToImu() {
 		double threshold = 1;
 		AngularVelocity omegas = imu.getAngularVelocity();
@@ -478,9 +481,11 @@ public class DefenderBot {
 
 		return (Math.abs(omegas.xRotationRate) > threshold) || (Math.abs(omegas.yRotationRate) > threshold) || (Math.abs(omegas.zRotationRate) > threshold);
 	}
+*/
 
     //--------------------------------------------------------------------------------------------
 
+/*
 	public boolean isNotMovingAccordingToImu3Axes() {
 		double threshold = 1;
 		AngularVelocity omegas = imu.getAngularVelocity();
@@ -488,12 +493,73 @@ public class DefenderBot {
 
 		return (Math.abs(omegas.xRotationRate) < threshold) && (Math.abs(omegas.yRotationRate) < threshold) && (Math.abs(omegas.zRotationRate) < threshold);
 	}
+*/
+    //--------------------------------------------------------------------------------------------
+
+	public void comeToHeading(double angle) throws Exception {
+		comeToHeading(angle, 0.5, 5, 5000);
+	}
+
+	public void comeToHeading(InternalGyroscopeService.Direction direction) throws Exception {
+		comeToHeading(direction.angle, 0.5, 10, 5000);
+	}
+
+	public void comeToHeading(double angle, double maxPower) throws Exception {
+		comeToHeading(angle, maxPower, 10, 5000);
+	}
+
+	public void comeToHeading(double angle, double maxPower, double tolerance) throws Exception {
+		comeToHeading(angle, maxPower, tolerance, 5000);
+	}
+
+	public void comeToHeading(double angle, double maxPower, double tolerance, double timeout) throws Exception {
+		double difference;
+		boolean keepTurning = true;
+		ElapsedTime timer = new ElapsedTime();
+
+		do {
+			difference = internalGyroscopeService.heading() - angle;
+
+			if (difference < (-1 * tolerance * 2) && difference > -180) {
+				turnCounterClockwise(maxPower, maxPower);
+				Thread.sleep(25);
+
+			} else if (difference < (-1 * tolerance) && difference > -180) {
+				turnCounterClockwise(maxPower / 4, maxPower / 4);
+				Thread.sleep(25);
+
+			} else if (difference > 2 * tolerance && difference < 180) {
+				turnClockwise(maxPower, maxPower);
+				Thread.sleep(25);
+
+			} else if (difference > tolerance && difference < 180) {
+				turnClockwise(maxPower / 2, maxPower / 2);
+				Thread.sleep(25);
+
+			} else {
+				keepTurning = false;
+				stopDriving();
+			}
+			if (timer.milliseconds() > timeout) {
+				keepTurning = false;
+			}
+
+		} while (keepTurning);
+
+	}
 
     //--------------------------------------------------------------------------------------------
 
 	public void shutdown() {
-		internalGyroscopeService.stop();
+		if (internalGyroscopeService != null) {
+			internalGyroscopeService.stop();
+		}
 	}
+
+    //--------------------------------------------------------------------------------------------
+
+
+
  }
 
 // ====================================================================================================
