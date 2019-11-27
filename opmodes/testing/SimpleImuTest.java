@@ -81,9 +81,9 @@ public class SimpleImuTest extends LinearOpMode {
 			telemetry.addData("Y Axis", bot.internalGyroscopeService.yAngle());
 			telemetry.addData("Z Axis", bot.internalGyroscopeService.zAngle());
 
-			telemetry.addData("Heading", bot.internalGyroscopeService.heading());
+// 			telemetry.addData("Heading", bot.internalGyroscopeService.heading());
 
-			telemetry.addData("Java", Runtime.class.getPackage().getImplementationVersion());
+// 			telemetry.addData("Java", Runtime.class.getPackage().getImplementationVersion());
 // 			telemetry.addData("Java", System.getProperty("java.version"));
 
 
@@ -97,6 +97,68 @@ public class SimpleImuTest extends LinearOpMode {
 */
 			telemetry.update();
 
+			try {
+				bot.comeToHeading(InternalGyroscopeService.Direction.N);
+			} catch (Exception e) {
+
+			}
+
+/*
+		double difference;
+		boolean keepTurning = true;
+		ElapsedTime timer = new ElapsedTime();
+		double angle = InternalGyroscopeService.Direction.N.angle;
+		double maxPower = 0.5;
+		double tolerance = 10;
+		double timeout = 3000;
+		do {
+			difference = bot.internalGyroscopeService.heading() - angle;
+			telemetry.addData("Tolerance", tolerance);
+			telemetry.addData("Target", angle);
+			telemetry.addData("Diff", difference);
+			telemetry.addData("Timeout", timeout);
+			telemetry.addData("Timer", timer.milliseconds());
+
+
+			if (difference < (-1 * tolerance * 2) && difference > -180) {
+				bot.turnCounterClockwise(maxPower, maxPower);
+				telemetry.addData("Turning", "counter");
+				telemetry.addData("Speed", "full");
+				sleep(25);
+
+			} else if (difference < (-1 * tolerance) && difference > -180) {
+				bot.turnCounterClockwise(maxPower / 4, maxPower / 4);
+				telemetry.addData("Turning", "counter");
+				telemetry.addData("Speed", "half");
+				sleep(25);
+
+			} else if (difference > 2 * tolerance && difference < 180) {
+				bot.turnClockwise(maxPower, maxPower);
+				telemetry.addData("Turning", "clock");
+				telemetry.addData("Speed", "full");
+				sleep(25);
+
+			} else if (difference > tolerance && difference < 180) {
+				bot.turnClockwise(maxPower / 2, maxPower / 2);
+				telemetry.addData("Turning", "clock");
+				telemetry.addData("Speed", "half");
+				sleep(25);
+
+			} else {
+				keepTurning = false;
+				bot.stopDriving();
+			}
+			if (timer.milliseconds() > timeout) {
+				keepTurning = false;
+			}
+			telemetry.update();
+
+
+		} while (keepTurning);
+		bot.stopDriving();
+*/
+
+/*
 			if (bot.internalGyroscopeService.heading() < -10 && bot.internalGyroscopeService.heading() > -180) {
 				bot.turnCounterClockwise(0.2, 0.2);
 				sleep(25);
@@ -106,6 +168,7 @@ public class SimpleImuTest extends LinearOpMode {
 			} else {
 				bot.stopDriving();
 			}
+*/
 
 
 		}
