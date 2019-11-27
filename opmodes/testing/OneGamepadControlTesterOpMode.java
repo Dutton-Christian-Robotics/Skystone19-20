@@ -57,7 +57,7 @@ import java.util.*;
 
 public class OneGamepadControlTesterOpMode extends OpMode {
 	private ElapsedTime runtime = new ElapsedTime();
-	private DefenderBot productionBot = new DefenderBot();
+	private SkystoneBot bot = new SkystoneBot();
 	private double driveScaleFactor = 1;
 	private Debouncer decreaseDriveScaleFactorDebouncer;
 
@@ -66,10 +66,21 @@ public class OneGamepadControlTesterOpMode extends OpMode {
      */
 	@Override
 	public void init() {
-		productionBot.init(hardwareMap, new ProductionTestConfiguration());
+		telemetry.addData("Status", "Initializing");
+		telemetry.update();
+		bot.init(hardwareMap, new ProductionTestConfiguration());
+/*
+		while (!bot.imu.isGyroCalibrated()) {
+			try {
+				Thread.sleep(50);
+			} catch (Exception e) {
 
-		// Tell the driver that initialization is complete.
-		telemetry.addData("Status", "Initialized");
+			}
+		}
+		telemetry.addData("Status", "IMU calibrated");
+		telemetry.update();
+*/
+
     }
 
     /*
@@ -105,6 +116,32 @@ public class OneGamepadControlTesterOpMode extends OpMode {
 		double rightStickY = -gamepad1.right_stick_y;
 		double rightStickX = gamepad1.right_stick_x;
 
+
+
+	    if (gamepad1.y) {
+	    		bot.grabMotor.setTargetPosition(30);
+
+// 		    bot.releaseFoundation();
+/*
+		    bot.leftFoundationGrabber.setPosition(1);
+		    bot.rightFoundationGrabber.setPosition(1);
+*/
+	    } else if (gamepad1.x) {
+	    		bot.grabMotor.setTargetPosition(180);
+
+	    } else if (gamepad1.b) {
+	    		bot.grabMotor.setTargetPosition(90);
+
+	    } else if (gamepad1.a) {
+	    		bot.grabMotor.setTargetPosition(230);
+// 		    bot.grabFoundation();
+/*
+		    bot.leftFoundationGrabber.setPosition(0);
+		    bot.rightFoundationGrabber.setPosition(0);
+*/
+	    }
+
+/*
 		if (gamepad1.left_bumper) {
 			try {
 				// testing shows that the loop runs so fast that a single press and release of the button is read multiple times.
@@ -119,46 +156,47 @@ public class OneGamepadControlTesterOpMode extends OpMode {
 		} else if (gamepad1.right_bumper) {
 			driveScaleFactor = 1;
 		}
+*/
 
 		if (gamepad1.start) {
-			productionBot.stopAllMotors();
+			bot.stopAllMotors();
 
 		} else if (gamepad1.left_trigger > 0) {
-			productionBot.driveLeft(gamepad1.left_trigger * driveScaleFactor, gamepad1.left_trigger * driveScaleFactor);
+			bot.driveLeft(gamepad1.left_trigger * driveScaleFactor, gamepad1.left_trigger * driveScaleFactor);
 
 		} else if (gamepad1.right_trigger > 0) {
-			productionBot.driveRight(gamepad1.right_trigger * driveScaleFactor, gamepad1.right_trigger * driveScaleFactor);
+			bot.driveRight(gamepad1.right_trigger * driveScaleFactor, gamepad1.right_trigger * driveScaleFactor);
 
 		} else if (gamepad1.dpad_up && gamepad1.dpad_left) {
-			productionBot.driveBasedOnMovementSettings(productionBot.diagonalForwardLeftMotion.scale(driveScaleFactor));
+			bot.driveBasedOnMovementSettings(bot.diagonalForwardLeftMotion.scale(driveScaleFactor));
 
 		} else if (gamepad1.dpad_up && gamepad1.dpad_right) {
-			productionBot.driveBasedOnMovementSettings(productionBot.diagonalForwardRightMotion.scale(driveScaleFactor));
+			bot.driveBasedOnMovementSettings(bot.diagonalForwardRightMotion.scale(driveScaleFactor));
 
 		} else if (gamepad1.dpad_down && gamepad1.dpad_left) {
-			productionBot.driveBasedOnMovementSettings(productionBot.diagonalReverseLeftMotion.scale(driveScaleFactor));
+			bot.driveBasedOnMovementSettings(bot.diagonalReverseLeftMotion.scale(driveScaleFactor));
 
 		} else if (gamepad1.dpad_down && gamepad1.dpad_right) {
-			productionBot.driveBasedOnMovementSettings(productionBot.diagonalReverseRightMotion.scale(driveScaleFactor));
+			bot.driveBasedOnMovementSettings(bot.diagonalReverseRightMotion.scale(driveScaleFactor));
 
 		} else if (leftStickY > 0) {
 
 	   		// Forward and Right
 			if (leftStickX > 0) {
-				SimpleMovementSettings foo = SimpleMovementSettings.combine(productionBot.forwardMotion, productionBot.turnRightMotion, leftStickX, leftStickY).scale(driveScaleFactor);
+				SimpleMovementSettings foo = SimpleMovementSettings.combine(bot.forwardMotion, bot.turnRightMotion, leftStickX, leftStickY).scale(driveScaleFactor);
 // 				telemetry.addData("movement", foo.toString());
-				productionBot.driveBasedOnMovementSettings(foo);
+				bot.driveBasedOnMovementSettings(foo);
 
 			// Forward and Left
 			} else if (leftStickX < 0) {
-				SimpleMovementSettings foo = SimpleMovementSettings.combine(productionBot.forwardMotion, productionBot.turnLeftMotion, leftStickX, leftStickY).scale(driveScaleFactor);
+				SimpleMovementSettings foo = SimpleMovementSettings.combine(bot.forwardMotion, bot.turnLeftMotion, leftStickX, leftStickY).scale(driveScaleFactor);
 // 				telemetry.addData("movement", foo.toString());
-				productionBot.driveBasedOnMovementSettings(foo);
+				bot.driveBasedOnMovementSettings(foo);
 
 			// Just Forward
 			} else {
-// 				telemetry.addData("movement", productionBot.forwardMotion.scale(leftStickY).toString());
-				productionBot.driveBasedOnMovementSettings(productionBot.forwardMotion.scale(leftStickY * driveScaleFactor));
+// 				telemetry.addData("movement", bot.forwardMotion.scale(leftStickY).toString());
+				bot.driveBasedOnMovementSettings(bot.forwardMotion.scale(leftStickY * driveScaleFactor));
 			}
 
 
@@ -166,82 +204,109 @@ public class OneGamepadControlTesterOpMode extends OpMode {
 
 			// Reverse and Right
 			if (leftStickX > 0) {
-				SimpleMovementSettings foo = SimpleMovementSettings.combine(productionBot.reverseMotion, productionBot.turnRightMotion, leftStickX, leftStickY);
+				SimpleMovementSettings foo = SimpleMovementSettings.combine(bot.reverseMotion, bot.turnRightMotion, leftStickX, leftStickY);
 // 				telemetry.addData("movement", foo.toString());
-				productionBot.driveBasedOnMovementSettings(foo.scale(driveScaleFactor));
+				bot.driveBasedOnMovementSettings(foo.scale(driveScaleFactor));
 
 			// Reverse and Left
 			} else if (leftStickX < 0) {
-				SimpleMovementSettings foo = SimpleMovementSettings.combine(productionBot.reverseMotion, productionBot.turnLeftMotion, leftStickX, leftStickY);
+				SimpleMovementSettings foo = SimpleMovementSettings.combine(bot.reverseMotion, bot.turnLeftMotion, leftStickX, leftStickY);
 // 				telemetry.addData("movement", foo.toString());
-				productionBot.driveBasedOnMovementSettings(foo.scale(driveScaleFactor));
+				bot.driveBasedOnMovementSettings(foo.scale(driveScaleFactor));
 
 			// Just Reverse
 			} else {
-// 				telemetry.addData("movement", productionBot.reverseMotion.scale(leftStickY).toString());
-				productionBot.driveBasedOnMovementSettings(productionBot.reverseMotion.scale(leftStickY * driveScaleFactor));
+// 				telemetry.addData("movement", bot.reverseMotion.scale(leftStickY).toString());
+				bot.driveBasedOnMovementSettings(bot.reverseMotion.scale(leftStickY * driveScaleFactor));
 			}
 
 
 
 
 		} else if (leftStickX > 0) {
-			SimpleMovementSettings foo = productionBot.turnRightMotion.scale(leftStickX * driveScaleFactor);
+			SimpleMovementSettings foo = bot.turnRightMotion.scale(leftStickX * driveScaleFactor);
 			telemetry.addData("movement", foo.toString());
-			productionBot.driveBasedOnMovementSettings(foo);
+			bot.driveBasedOnMovementSettings(foo);
 
 
 		} else if (leftStickX < 0) {
-			SimpleMovementSettings foo = productionBot.turnLeftMotion.scale(leftStickX * driveScaleFactor);
+			SimpleMovementSettings foo = bot.turnLeftMotion.scale(leftStickX * driveScaleFactor);
 			telemetry.addData("movement", foo.toString());
-			productionBot.driveBasedOnMovementSettings(foo);
+			bot.driveBasedOnMovementSettings(foo);
 		} else {
-			productionBot.driveBasedOnMovementSettings(productionBot.stopMotion);
+			bot.driveBasedOnMovementSettings(bot.stopMotion);
+		}
+
+		if (gamepad1.dpad_up) {
+			bot.moveLiftUp(1);
+		} else {
+			bot.stopLiftMotor();
+		}
+
+		if (gamepad1.dpad_down) {
+			bot.moveLiftDown(1);
+		} else {
+			bot.stopLiftMotor();
 		}
 
 	   if (rightStickY > 0) {
-		   productionBot.tiltArmUp(rightStickY);
+		   bot.tiltArmUp(rightStickY);
 	   } else if (rightStickY < 0) {
-		   productionBot.tiltArmDown(rightStickY);
+		   bot.tiltArmDown(rightStickY);
 	   } else {
-		   productionBot.tiltArmDown(0);
+		   bot.tiltArmDown(0);
 	   }
 
+	   if (rightStickX > 0) {
+		   bot.extendArm(rightStickX);
+	   } else if (rightStickX < 0) {
+		   bot.retractArm(rightStickX);
+	   } else {
+		   bot.stopExtendMotor();
+	   }
+
+
+/*
 	   if (gamepad1.y) {
 	        telemetry.addData("lift", "going up");
-		   productionBot.moveLiftUp(0.5);
+		   bot.moveLiftUp(0.5);
 	   } else if (gamepad1.a) {
 	        telemetry.addData("lift", "going down");
-		   productionBot.moveLiftDown(0.5);
+		   bot.moveLiftDown(0.5);
 	   } else {
-		   productionBot.stopLiftMotor();
+		   bot.stopLiftMotor();
 	   }
+*/
 
+/*
 	   if (gamepad1.x) {
 	        telemetry.addData("arm", "extending");
-		   productionBot.extendArm(0.5);
+		   bot.extendArm(0.5);
 	   } else if (gamepad1.b) {
 	        telemetry.addData("arm", "retracting");
-		   productionBot.retractArm(0.75);
+		   bot.retractArm(0.75);
 	   } else {
-		   productionBot.stopExtendMotor();
+		   bot.stopExtendMotor();
 	   }
 	   if (gamepad1.dpad_up) {
-		   productionBot.grabBlock(1);
+		   bot.grabBlock(1);
 	   } else if (gamepad1.dpad_down) {
-		   productionBot.releaseBlock(1);
+		   bot.releaseBlock(1);
 	   } else {
-		   productionBot.stopGrabMotor();
+		   bot.stopGrabMotor();
 	   }
+*/
 
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Drive Scale", "%.2f", driveScaleFactor);
-        telemetry.addData("Lift Position", "%d", productionBot.liftMotor.getCurrentPosition());
-        telemetry.addData("Tilt Position", "%d", productionBot.tiltMotor.getCurrentPosition());
-        telemetry.addData("Extend Position", "%d", productionBot.extendMotor.getCurrentPosition());
 /*
-        telemetry.addData("FL Encoder", "(%03d)", productionBot.frontLeftDrive.getCurrentPosition());
+        telemetry.addData("Drive Scale", "%.2f", driveScaleFactor);
+        telemetry.addData("Lift Position", "%d", bot.liftMotor.getCurrentPosition());
+        telemetry.addData("Tilt Position", "%d", bot.tiltMotor.getCurrentPosition());
+        telemetry.addData("Extend Position", "%d", bot.extendMotor.getCurrentPosition());
+*/
+/*
+        telemetry.addData("FL Encoder", "(%03d)", bot.frontLeftDrive.getCurrentPosition());
 
 */
 
