@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -82,6 +81,16 @@ public class InternalGyroscopeService implements Runnable {
 	 	X,
 	 	Y,
 	 	Z
+ 	}
+
+ 	public enum Direction {
+ 		N(0), E(-90), S(180), W(90);
+
+	 	public final double angle;
+
+	 	private Direction(double a) {
+		 	this.angle = a;
+	 	}
  	}
 
 
