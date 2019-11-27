@@ -56,8 +56,8 @@ public class SkystoneBot extends DefenderBot {
 		tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		grabMotor = new SmartDcMotor(hwMap, botConfiguration.grabMotorName, botConfiguration.grabMotorForwardDirection);
-// 		grabMotor.setTargetPosition(0);
 		grabMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		grabMotor.setTargetPosition(0);
 		grabMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     		grabMotor.setPower(botConfiguration.grabMotorPower);
 
@@ -68,10 +68,14 @@ public class SkystoneBot extends DefenderBot {
 
     //--------------------------------------------------------------------------------------------
 
-    public void activateSkystoneVisionService() {
-		skystoneVisionService = new SkystoneVisionService(250, botConfiguration);
+    public void activateSkystoneVisionService(int cmvid) {
+		skystoneVisionService = new SkystoneVisionService(250, botConfiguration, hwMap, cmvid);
 		skystoneVisionServiceThread = new Thread(skystoneVisionService);
 		skystoneVisionServiceThread.start();
+    }
+
+    public void activateSkystoneVisionService() {
+	    activateSkystoneVisionService(-1);
     }
 
     //--------------------------------------------------------------------------------------------
