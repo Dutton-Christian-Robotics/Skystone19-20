@@ -76,7 +76,7 @@ public class DefenderBot {
 	//     public TouchSensor frontTouch = null;
 
 	protected HardwareMap hwMap           = null;
-	protected DefenderBotConfiguration botConfiguration 	= null;
+	protected SkystoneBotConfiguration botConfiguration 	= null;
 	private ElapsedTime period  = new ElapsedTime();
 
 	public Double forwardSecondsPerInch = null;
@@ -89,6 +89,9 @@ public class DefenderBot {
 	public SimpleMovementSettings turnLeftMotion = new SimpleMovementSettings(1, 1, 1, 1);
 	public SimpleMovementSettings stopMotion = new SimpleMovementSettings(0, 0, 0, 0);
 
+	public SimpleMovementSettings slideRightMotion = new SimpleMovementSettings(-1, 1, -1, 1);
+	public SimpleMovementSettings slideLeftMotion = new SimpleMovementSettings(1, -1, 1, -1);
+
 	public SimpleMovementSettings diagonalForwardLeftMotion = new SimpleMovementSettings(0, -1, 1, 0);
 	public SimpleMovementSettings diagonalForwardRightMotion = new SimpleMovementSettings(-1, 0, 0, 1);
 	public SimpleMovementSettings diagonalReverseLeftMotion = new SimpleMovementSettings(1, 0, 0, -1);
@@ -98,7 +101,7 @@ public class DefenderBot {
 	public DefenderBot() {
 	}
 
-	public void init(HardwareMap ahwMap, DefenderBotConfiguration botConfig) {
+	public void init(HardwareMap ahwMap, SkystoneBotConfiguration botConfig) {
 		// Save reference to Hardware map and config file
 		hwMap = ahwMap;
 		botConfiguration = botConfig;
