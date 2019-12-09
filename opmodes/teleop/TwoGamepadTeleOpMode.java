@@ -39,25 +39,12 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.concurrent.Callable;
 import java.util.*;
 
-/**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
-@TeleOp(name="Beta: 2 Gamepad Driving", group="Iterative Opmode")
+@TeleOp(name="Alpha: 2 Gamepad Driving", group="Iterative Opmode")
 
 public class TwoGamepadTeleOpMode extends OpMode {
 	private ElapsedTime runtime = new ElapsedTime();
-	private DefenderBot bot = new DefenderBot();
+	private SkystoneBot bot = new SkystoneBot();
 	private double driveScaleFactor = 1;
 	private double manipulatorScaleFactor = 1;
 	private Debouncer decreaseDriveScaleFactorDebouncer;
@@ -68,6 +55,8 @@ public class TwoGamepadTeleOpMode extends OpMode {
      */
 	@Override
 	public void init() {
+		telemetry.addData("Status", "Initializing");
+		telemetry.update();
 		bot.init(hardwareMap, new ProductionTestConfiguration());
 
 		// Tell the driver that initialization is complete.
@@ -252,14 +241,30 @@ public class TwoGamepadTeleOpMode extends OpMode {
 		}
 
 
-		// Control grab wheels with gamepad 2 dpad--up and down, with L/R stopping the moter
+
 		if (gamepad2.dpad_up) {
-			bot.grabBlock(manipulatorScaleFactor);
+			 bot.releaseFoundation();
 		} else if (gamepad2.dpad_down) {
-			bot.releaseBlock(manipulatorScaleFactor);
-		} else if (gamepad2.dpad_left || gamepad2.dpad_right) {
-			bot.stopGrabMotor();
+		    bot.grabFoundation();
 		}
+
+	    if (gamepad2.y) {
+	    		bot.openClaw();
+	    		telemetry.addData("Claw", "open");
+
+	    } else if (gamepad2.x) {
+	    		bot.neutralClaw();
+	    		telemetry.addData("Claw", "neutral");
+
+	    } else if (gamepad2.b) {
+		    bot.releaseBlock();
+	    		telemetry.addData("Claw", "release");
+
+		} else if (gamepad2.a) {
+			bot.captureBlock();
+	    		telemetry.addData("Claw", "capture");
+		}
+
 
 
 		telemetry.addData("Status", "Run Time: " + runtime.toString());
