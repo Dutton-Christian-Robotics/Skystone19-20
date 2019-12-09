@@ -65,7 +65,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 public class TestVisionOpMode extends OpMode {
 	private ElapsedTime runtime = new ElapsedTime();
 	private SkystoneBot bot = new SkystoneBot();
-	private static final float mmPerInch        = 25.4f;
 
 	@Override
 	public void init() {

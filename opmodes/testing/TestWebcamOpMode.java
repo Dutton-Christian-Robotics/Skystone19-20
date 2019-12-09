@@ -39,6 +39,8 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.concurrent.Callable;
 import java.util.*;
 
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
@@ -65,7 +67,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 public class TestWebcamOpMode extends OpMode {
 	private ElapsedTime runtime = new ElapsedTime();
 	private SkystoneBot bot = new SkystoneBot();
-	private static final float mmPerInch        = 25.4f;
+
 
 	@Override
 	public void init() {
@@ -80,8 +82,8 @@ public class TestWebcamOpMode extends OpMode {
 		}
 
 		try {
-			int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-			bot.activateSkystoneVisionService(cameraMonitorViewId);
+// 			int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+			bot.activateSkystoneVisionService();
 		} catch (Exception e) {
 			telemetry.addData("failed vision service activate", "");
 			telemetry.update();
@@ -105,7 +107,7 @@ public class TestWebcamOpMode extends OpMode {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         if (bot.skystoneVisionService.isSkystoneVisible()) {
 			telemetry.addData("Skystone", "yes");
-			telemetry.addData("foo", "%2d", bot.skystoneVisionService.foo());
+// 			telemetry.addData("foo", "%2d", bot.skystoneVisionService.foo());
 
 			telemetry.addData("avg Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
 				bot.skystoneVisionService.dX, bot.skystoneVisionService.dY, bot.skystoneVisionService.dZ);
@@ -114,7 +116,7 @@ public class TestWebcamOpMode extends OpMode {
 
                 VectorF translation = bot.skystoneVisionService.rawDirectionToSkystone().getTranslation();
                 telemetry.addData("inst Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+                        translation.get(0) / Measurements.mmPerInch, translation.get(1) / Measurements.mmPerInch, translation.get(2) / Measurements.mmPerInch);
 
                 // express the rotation of the robot in degrees.
                 Orientation rotation = Orientation.getOrientation(bot.skystoneVisionService.rawDirectionToSkystone(), EXTRINSIC, XYZ, DEGREES);

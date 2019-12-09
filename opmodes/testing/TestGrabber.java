@@ -102,9 +102,9 @@ public class TestGrabber extends OpMode {
     public void loop() {
 
 
-    		bot.grabMotor.setPower(0.25);
-    		bot.grabMotor.setTargetPosition(230);
-    		i += 10;
+    		bot.grabMotor.setPower(1);
+    		bot.grabMotor.setTargetPosition(-90);
+//     		i += 10;
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Position", bot.grabMotor.getTargetPosition());
