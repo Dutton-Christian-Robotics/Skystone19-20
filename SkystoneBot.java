@@ -36,37 +36,45 @@ public class SkystoneBot extends DefenderBot {
 	private Thread skystoneVisionServiceThread = null;
 
 
-	@Override
-	public void init(HardwareMap ahwMap, DefenderBotConfiguration botConfig) {
+	public void init(HardwareMap ahwMap, SkystoneBotConfiguration botConfig) {
 		super.init(ahwMap, botConfig);
 
-		leftFoundationGrabber = ahwMap.get(Servo.class, botConfiguration.leftFoundationGrabberServoName);
-		leftFoundationGrabber.setDirection(botConfiguration.leftFoundationGrabberServoDirection);
+		leftFoundationGrabber = ahwMap.get(Servo.class, botConfig.leftFoundationGrabberServoName);
+		leftFoundationGrabber.setDirection(botConfig.leftFoundationGrabberServoDirection);
 
-		rightFoundationGrabber = ahwMap.get(Servo.class, botConfiguration.rightFoundationGrabberServoName);
-		rightFoundationGrabber.setDirection(botConfiguration.rightFoundationGrabberServoDirection);
+		rightFoundationGrabber = ahwMap.get(Servo.class, botConfig.rightFoundationGrabberServoName);
+		rightFoundationGrabber.setDirection(botConfig.rightFoundationGrabberServoDirection);
 
-		liftMotor = new SmartDcMotor(hwMap, botConfiguration.liftMotorName, botConfiguration.liftMotorForwardDirection);
+		liftMotor = new SmartDcMotor(hwMap, botConfig.liftMotorName, botConfig.liftMotorForwardDirection);
 		liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+// 		liftMotor.setTargetPosition(0);
+		liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-		extendMotor = new SmartDcMotor(hwMap, botConfiguration.extendMotorName, botConfiguration.extendMotorForwardDirection);
+		extendMotor = new SmartDcMotor(hwMap, botConfig.extendMotorName, botConfig.extendMotorForwardDirection);
 		extendMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		extendMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+// 		extendMotor.setTargetPosition(0);
+		extendMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-		tiltMotor = new SmartDcMotor(hwMap, botConfiguration.tiltMotorName, botConfiguration.tiltMotorForwardDirection);
+		tiltMotor = new SmartDcMotor(hwMap, botConfig.tiltMotorName, botConfig.tiltMotorForwardDirection);
 		tiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+// 		tiltMotor.setTargetPosition(0);
+		tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-		grabMotor = new SmartDcMotor(hwMap, botConfiguration.grabMotorName, botConfiguration.grabMotorForwardDirection);
+		grabMotor = new SmartDcMotor(hwMap, botConfig.grabMotorName, botConfig.grabMotorForwardDirection);
 		grabMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		grabMotor.setTargetPosition(0);
 		grabMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    		grabMotor.setPower(botConfiguration.grabMotorPower);
+    		grabMotor.setPower(botConfig.grabMotorPower);
 
 // 		grabMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		stopManipulatorMotors();
 
 	}
 
-    //--------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
 
     public void activateSkystoneVisionService(int cmvid) {
 		skystoneVisionService = new SkystoneVisionService(250, botConfiguration, hwMap, cmvid);
@@ -78,7 +86,7 @@ public class SkystoneBot extends DefenderBot {
 	    activateSkystoneVisionService(-1);
     }
 
-    //--------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
 
     public void stopManipulatorMotors() {
 	    liftMotor.setPower(0);
@@ -87,7 +95,7 @@ public class SkystoneBot extends DefenderBot {
 // 	    grabMotor.setPower(0); // we don't actually want the grab/claw to have 0 power or it won't actually go to the right position.
 	}
 
-    //--------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
 
 	@Override
 	public void stopAllMotors() {
@@ -95,7 +103,44 @@ public class SkystoneBot extends DefenderBot {
 		stopManipulatorMotors();
 	}
 
-    //--------------------------------------------------------------------------------------------
+
+    // --------------------------------------------------------------------------------------------
+
+    public void manipulatorsToCapturePosition() {
+		openClaw();
+		setExtendPosition(botConfiguration.extendPositionForCapture);
+		setTiltPosition(botConfiguration.tiltPositionForCapture);
+// 		setLiftPosition(botConfiguration.liftPositionForCapture);
+    }
+
+    // --------------------------------------------------------------------------------------------
+
+    public void manipulatorsToStartPosition() {
+		setExtendPosition(botConfiguration.extendPositionForStart);
+		setTiltPosition(botConfiguration.tiltPositionForStart);
+// 		setLiftPosition(botConfiguration.liftPositionForStart);
+		neutralClaw();
+    }
+
+    // --------------------------------------------------------------------------------------------
+
+    public void manipulatorsToTravelPosition() {
+		captureBlock();
+		setExtendPosition(botConfiguration.extendPositionForTravel);
+		setTiltPosition(botConfiguration.tiltPositionForTravel);
+// 		setLiftPosition(botConfiguration.liftPositionForTravel);
+    }
+
+    // --------------------------------------------------------------------------------------------
+
+    public void manipulatorsToPlacementPosition() {
+		captureBlock();
+		setExtendPosition(botConfiguration.extendPositionForPlacement);
+		setTiltPosition(botConfiguration.tiltPositionForPlacement);
+// 		setLiftPosition(botConfiguration.liftPositionForPlacement);
+    }
+
+    // --------------------------------------------------------------------------------------------
 
     	public void moveLiftUp(double power) {
 	    	power = Math.abs(power);
@@ -103,7 +148,7 @@ public class SkystoneBot extends DefenderBot {
 	    	liftMotor.setPower(power);
     	}
 
-    //--------------------------------------------------------------------------------------------
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
     	public void moveLiftDown(double power) {
 	    	power = Math.abs(power);
@@ -111,13 +156,30 @@ public class SkystoneBot extends DefenderBot {
 	    	liftMotor.setPower(power);
     	}
 
-    //--------------------------------------------------------------------------------------------
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
     	public void stopLiftMotor() {
 	    	liftMotor.setPower(0);
     	}
 
-    //--------------------------------------------------------------------------------------------
+	public void setTiltPosition(int i) {
+		setTiltPosition(i, 1);
+	}
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+	public void setLiftPosition(int i, double power) {
+	    	liftMotor.setPower(power);
+		liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		liftMotor.setTargetPosition(i);
+		while(liftMotor.isBusy()) {
+		}
+		liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+	    	liftMotor.setPower(0);
+    }
+
+
+    // --------------------------------------------------------------------------------------------
 
     	public void tiltArmUp(double power) {
 	    	power = Math.abs(power);
@@ -125,7 +187,7 @@ public class SkystoneBot extends DefenderBot {
 	    	tiltMotor.setPower(power);
     	}
 
-    //--------------------------------------------------------------------------------------------
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
     	public void tiltArmDown(double power) {
 	    	power = Math.abs(power);
@@ -133,14 +195,30 @@ public class SkystoneBot extends DefenderBot {
 	    	tiltMotor.setPower(power);
     	}
 
-    //--------------------------------------------------------------------------------------------
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
     	public void stopTiltMotor() {
 	    	tiltMotor.setPower(0);
     	}
 
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
-    //--------------------------------------------------------------------------------------------
+	public void setTiltPosition(int i) {
+		setTiltPosition(i, 1);
+	}
+
+	public void setTiltPosition(int i, double power) {
+	    	tiltMotor.setPower(power);
+		tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		tiltMotor.setTargetPosition(i);
+		while(tiltMotor.isBusy()) {
+		}
+		tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+	    	tiltMotor.setPower(0);
+    }
+
+
+    // --------------------------------------------------------------------------------------------
 
     	public void extendArm(double power) {
 	    	power = Math.abs(power);
@@ -148,7 +226,7 @@ public class SkystoneBot extends DefenderBot {
 	    	extendMotor.setPower(power);
     	}
 
-    //--------------------------------------------------------------------------------------------
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
     	public void retractArm(double power) {
 	    	power = Math.abs(power);
@@ -156,14 +234,25 @@ public class SkystoneBot extends DefenderBot {
 	    	extendMotor.setPower(power);
     	}
 
-    //--------------------------------------------------------------------------------------------
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
     	public void stopExtendMotor() {
 	    	extendMotor.setPower(0);
     	}
 
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
-    //--------------------------------------------------------------------------------------------
+    public void <p>setExtendPosition</p>(int i) {
+	    	extendMotor.setPower(1);
+		extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		extendMotor.setTargetPosition(i);
+		while(extendMotor.isBusy()) {
+		}
+		extendMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+	    	extendMotor.setPower(0);
+    }
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
 
     	public void grabBlock(double power) {
 /*
@@ -177,11 +266,26 @@ public class SkystoneBot extends DefenderBot {
 	    	grabMotor.setTargetPosition(botConfiguration.capturePosition);
     	}
 
-    	public void resetClaw() {
-	    	grabMotor.setTargetPosition(botConfiguration.resetPosition);
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+    	public void neutralClaw() {
+	    	grabMotor.setTargetPosition(botConfiguration.neutralPosition);
     	}
 
-    //--------------------------------------------------------------------------------------------
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+    	public void openClaw() {
+	    	grabMotor.setTargetPosition(botConfiguration.openPosition);
+    	}
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+    	public void releaseBlock() {
+	    	grabMotor.setTargetPosition(botConfiguration.releasePosition);
+
+    	}
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
     	public void releaseBlock(double power) {
 /*
@@ -191,32 +295,28 @@ public class SkystoneBot extends DefenderBot {
 */
     	}
 
-    	public void releaseBlock() {
-	    	grabMotor.setTargetPosition(botConfiguration.releasePosition);
 
-    	}
-
-    //--------------------------------------------------------------------------------------------
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
     	public void stopGrabMotor() {
 	    	grabMotor.setPower(0);
     	}
 
-    //--------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
 
     public void grabFoundation() {
-	    leftFoundationGrabber.setPosition(1.2);
-	    rightFoundationGrabber.setPosition(1.2);
+	    leftFoundationGrabber.setPosition(1.6);
+	    rightFoundationGrabber.setPosition(1.6);
     }
 
-    //--------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
 
     public void releaseFoundation() {
 	    leftFoundationGrabber.setPosition(0);
 	    rightFoundationGrabber.setPosition(0);
     }
 
-    //--------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------
 
 	@Override
 	public void shutdown() {
