@@ -19,6 +19,7 @@ import java.util.List;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XZY;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
@@ -33,27 +34,6 @@ public class SkystoneVisionService implements Runnable {
 
 	private WebcamName webcamName;
 
-	private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
-	private static final boolean PHONE_IS_PORTRAIT = false  ;
-
-	// Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
-	// We will define some constants and conversions here
-	private static final float mmPerInch        = 25.4f;
-	private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
-
-	// Constant for Stone Target
-	private static final float stoneZ = 2.00f * mmPerInch;
-
-	// Constants for the center support targets
-	private static final float bridgeZ = 6.42f * mmPerInch;
-	private static final float bridgeY = 23 * mmPerInch;
-	private static final float bridgeX = 5.18f * mmPerInch;
-	private static final float bridgeRotY = 59;                                 // Units are degrees
-	private static final float bridgeRotZ = 180;
-
-	// Constants for perimeter targets
-	private static final float halfField = 72 * mmPerInch;
-	private static final float quadField  = 36 * mmPerInch;
 
 	private float phoneXRotate    = 0;
 	private float phoneYRotate    = 0;
@@ -73,18 +53,23 @@ public class SkystoneVisionService implements Runnable {
 	public SkystoneVisionService(int st, DefenderBotConfiguration botConfiguration, HardwareMap hwMap, int cmvid) {
 		sleepTime = st;
 
-		webcamName = hwMap.get(WebcamName.class, "WEBCAM"); //add name to config file
 		VuforiaLocalizer.Parameters parameters;
 
-// 		VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 		if (cmvid == -1) {
 			parameters = new VuforiaLocalizer.Parameters();
 		} else {
 			parameters = new VuforiaLocalizer.Parameters(cmvid);
 		}
 		parameters.vuforiaLicenseKey = botConfiguration.vuforiaKey;
-// 		parameters.cameraDirection   = CAMERA_CHOICE;
-		parameters.cameraName = webcamName;
+
+		if (botConfiguration.useExternalWebcam) {
+			webcamName = hwMap.get(WebcamName.class, botConfiguration.externalWebcamName);
+			parameters.cameraName = webcamName;
+		} else {
+			parameters.cameraDirection   = botConfiguration.cameraChoice;
+
+		}
+
 
 		vuforia = ClassFactory.getInstance().createVuforia(parameters);
 		VuforiaTrackables targets = vuforia.loadTrackablesFromAsset("Skystone");
@@ -93,36 +78,16 @@ public class SkystoneVisionService implements Runnable {
 		skystoneTarget.setName("Skystone Target");
 
 		skystoneTarget.setLocation(OpenGLMatrix
-                .translation(0, 0, stoneZ)
+                .translation(0, 0, Measurements.stoneZ)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
 
 		// For convenience, gather together all the trackable objects in one easily-iterable collection */
 		List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 		allTrackables.addAll(targets);
 
-		// We need to rotate the camera around it's long axis to bring the correct camera forward.
-// 		if (CAMERA_CHOICE == BACK) {
-// 			phoneYRotate = -90;
-/*
-		} else {
-			phoneYRotate = 90;
-		}
-*/
-
-		// Rotate the phone vertical about the X axis if it's in portrait mode
-// 		if (PHONE_IS_PORTRAIT) {
-// 			phoneXRotate = 9-0 ;	//don't need this for webcam?
-// 		}
-
-		// Next, translate the camera lens to where it is on the robot.
-		// In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
-		final float CAMERA_FORWARD_DISPLACEMENT  = 4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
-		final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground
-		final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
-
 		OpenGLMatrix robotFromCamera = OpenGLMatrix
-			.translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-			.multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
+			.translation(botConfiguration.webcam_dX, botConfiguration.webcam_dY, botConfiguration.webcam_dZ)
+			.multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, botConfiguration.webcam_rX, botConfiguration.webcam_rZ, botConfiguration.webcam_rY));
 
 		/**  Let all the trackable listeners know where the phone is.  */
 		for (VuforiaTrackable trackable : allTrackables) {
@@ -150,7 +115,7 @@ public class SkystoneVisionService implements Runnable {
 				movingAverageItems.add(rawDirectionToSkystone());
 				calculateMovingAverage();
 			} else {
-				movingAverageItems.clear();
+				clearMovingAverage();
 			}
 			try {
 				Thread.sleep(sleepTime);
@@ -162,9 +127,10 @@ public class SkystoneVisionService implements Runnable {
 
     //--------------------------------------------------------------------------------------------
 
-    public int foo() {
-	    return movingAverageItems.size();
-    }
+	public void clearMovingAverage() {
+		movingAverageItems.clear();
+	}
+
 
 	public void calculateMovingAverage() {
 		if (movingAverageItems.size() > 0) {
@@ -181,9 +147,9 @@ public class SkystoneVisionService implements Runnable {
 				VectorF translation = location.getTranslation();
 				Orientation rotation = Orientation.getOrientation(location, EXTRINSIC, XYZ, DEGREES);
 
-				dXsum += translation.get(0) / mmPerInch;
-				dYsum += translation.get(1) / mmPerInch;
-				dZsum += translation.get(2) / mmPerInch;
+				dXsum += translation.get(0) / Measurements.mmPerInch;
+				dYsum += translation.get(1) / Measurements.mmPerInch;
+				dZsum += translation.get(2) / Measurements.mmPerInch;
 				rXsum += rotation.firstAngle;
 				rYsum += rotation.secondAngle;
 				rZsum += rotation.thirdAngle;
