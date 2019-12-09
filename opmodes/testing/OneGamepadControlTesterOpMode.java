@@ -119,30 +119,24 @@ public class OneGamepadControlTesterOpMode extends OpMode {
 
 
 	    if (gamepad1.y) {
-	    		bot.grabMotor.setTargetPosition(30);
+	    		bot.openClaw();
+	    		telemetry.addData("claw", "opening");
 
-// 		    bot.releaseFoundation();
-/*
-		    bot.leftFoundationGrabber.setPosition(1);
-		    bot.rightFoundationGrabber.setPosition(1);
-*/
 	    } else if (gamepad1.x) {
-	    		bot.grabMotor.setTargetPosition(180);
+	    		bot.neutralClaw();
+	    		telemetry.addData("claw", "neutral");
 
 	    } else if (gamepad1.b) {
-	    		bot.grabMotor.setTargetPosition(90);
+		    bot.releaseBlock();
+	    		telemetry.addData("claw", "release");
 
 	    } else if (gamepad1.a) {
-	    		bot.grabMotor.setTargetPosition(230);
-// 		    bot.grabFoundation();
-/*
-		    bot.leftFoundationGrabber.setPosition(0);
-		    bot.rightFoundationGrabber.setPosition(0);
-*/
+		    bot.captureBlock();
+	    		telemetry.addData("claw", "capture");
 	    }
 
-/*
 		if (gamepad1.left_bumper) {
+// 			bot.setExtendPosition(300);
 			try {
 				// testing shows that the loop runs so fast that a single press and release of the button is read multiple times.
 				// I'm using a Debouncer object to throttle how often it can be called.
@@ -156,7 +150,6 @@ public class OneGamepadControlTesterOpMode extends OpMode {
 		} else if (gamepad1.right_bumper) {
 			driveScaleFactor = 1;
 		}
-*/
 
 		if (gamepad1.start) {
 			bot.stopAllMotors();
@@ -167,17 +160,33 @@ public class OneGamepadControlTesterOpMode extends OpMode {
 		} else if (gamepad1.right_trigger > 0) {
 			bot.driveRight(gamepad1.right_trigger * driveScaleFactor, gamepad1.right_trigger * driveScaleFactor);
 
+		} else if (gamepad1.dpad_left) {
+		    bot.grabFoundation();
+
+		} else if (gamepad1.dpad_right) {
+		    bot.releaseFoundation();
+
+
+
+/*
 		} else if (gamepad1.dpad_up && gamepad1.dpad_left) {
 			bot.driveBasedOnMovementSettings(bot.diagonalForwardLeftMotion.scale(driveScaleFactor));
+*/
 
+/*
 		} else if (gamepad1.dpad_up && gamepad1.dpad_right) {
 			bot.driveBasedOnMovementSettings(bot.diagonalForwardRightMotion.scale(driveScaleFactor));
+*/
 
+/*
 		} else if (gamepad1.dpad_down && gamepad1.dpad_left) {
 			bot.driveBasedOnMovementSettings(bot.diagonalReverseLeftMotion.scale(driveScaleFactor));
+*/
 
+/*
 		} else if (gamepad1.dpad_down && gamepad1.dpad_right) {
 			bot.driveBasedOnMovementSettings(bot.diagonalReverseRightMotion.scale(driveScaleFactor));
+*/
 
 		} else if (leftStickY > 0) {
 
@@ -239,11 +248,7 @@ public class OneGamepadControlTesterOpMode extends OpMode {
 
 		if (gamepad1.dpad_up) {
 			bot.moveLiftUp(1);
-		} else {
-			bot.stopLiftMotor();
-		}
-
-		if (gamepad1.dpad_down) {
+		} else if (gamepad1.dpad_down) {
 			bot.moveLiftDown(1);
 		} else {
 			bot.stopLiftMotor();
@@ -299,12 +304,11 @@ public class OneGamepadControlTesterOpMode extends OpMode {
 
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-/*
         telemetry.addData("Drive Scale", "%.2f", driveScaleFactor);
         telemetry.addData("Lift Position", "%d", bot.liftMotor.getCurrentPosition());
         telemetry.addData("Tilt Position", "%d", bot.tiltMotor.getCurrentPosition());
         telemetry.addData("Extend Position", "%d", bot.extendMotor.getCurrentPosition());
-*/
+        telemetry.update();
 /*
         telemetry.addData("FL Encoder", "(%03d)", bot.frontLeftDrive.getCurrentPosition());
 
