@@ -27,6 +27,10 @@ abstract class SkystoneBotConfiguration extends DefenderBotConfiguration {
 	public int openPosition = 0;
 	public int neutralPosition = 0;
 
+	public int tiltPositionForPreCapture = 0;
+	public int extendPositionForPreCapture = 0;
+	public int liftPositionForPreCapture = 0;
+
 	public int tiltPositionForCapture = 0;
 	public int extendPositionForCapture = 0;
 	public int liftPositionForCapture = 0;
@@ -34,10 +38,6 @@ abstract class SkystoneBotConfiguration extends DefenderBotConfiguration {
 	public int tiltPositionForTravel = 0;
 	public int extendPositionForTravel = 0;
 	public int liftPositionForTravel = 0;
-
-	public int tiltPositionForStart = 0;
-	public int extendPositionForStart = 0;
-	public int liftPositionForStart = 0;
 
 	public int tiltPositionForStart = 0;
 	public int extendPositionForStart = 0;

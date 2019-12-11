@@ -49,18 +49,22 @@ class ProductionTestConfiguration extends SkystoneBotConfiguration {
 
 		// Configuration for grab/claw open and close positions
 		grabMotorPower = 1;
-		capturePosition = 30;
+		capturePosition = 90;
 		releasePosition = -20;
 		openPosition = -50;
 		neutralPosition = 0;
 
 
-		tiltPositionForCapture = -100;
-		extendPositionForCapture = 300;
+		tiltPositionForPreCapture = 100;
+		extendPositionForPreCapture = 600;
+		liftPositionForPreCapture = 0;
+
+		tiltPositionForCapture = -150;
+		extendPositionForCapture = 600;
 		liftPositionForCapture = 0;
 
-		tiltPositionForTravel = 0;
-		extendPositionForTravel = 300;
+		tiltPositionForTravel = 50;
+		extendPositionForTravel = 150;
 		liftPositionForTravel = 0;
 
 		tiltPositionForStart = 0;
