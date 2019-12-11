@@ -186,6 +186,13 @@ public class SkystoneVisionService implements Runnable {
 	}
 
     //--------------------------------------------------------------------------------------------
+    	public float raw_dY() {
+           VectorF translation = rawDirectionToSkystone().getTranslation();
+           return translation.get(1) / Measurements.mmPerInch;
+    	}
+
+
+    //--------------------------------------------------------------------------------------------
 
 	public void stop() {
 		isRunning = false;
