@@ -76,18 +76,35 @@ public class TestEncodersOpMode extends LinearOpMode {
 		waitForStart();
 		runtime.reset();
 
+
+/*
 		bot.manipulatorsToCapturePosition();
 		sleep(2000);
 
 		bot.manipulatorsToStartPosition();
+*/
 
+
+		    bot.leftFoundationGrabber.setPosition(0);
+		    bot.rightFoundationGrabber.setPosition(0);
+
+
+		double p = 0.6;
+		while (opModeIsActive()) {
 
 /*
-		while (opModeIsActive()) {
+		    bot.leftFoundationGrabber.setPosition(p);
+		    bot.rightFoundationGrabber.setPosition(p);
+*/
+
+			telemetry.addData("Left", bot.leftFoundationGrabber.getPosition());
+			telemetry.addData("right", bot.rightFoundationGrabber.getPosition());
+			telemetry.update();
+			sleep(500);
+// 			p += 0.1;
 
 
 		}
-*/
 
     }
 }
