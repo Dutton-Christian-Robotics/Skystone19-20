@@ -108,8 +108,8 @@ public class SkystoneBot extends DefenderBot {
 
     public void manipulatorsToPreCapturePosition() {
 		openClaw();
-		setExtendPosition(botConfiguration.extendPositionForPreCapture);
 		setTiltPosition(botConfiguration.tiltPositionForPreCapture);
+		setExtendPosition(botConfiguration.extendPositionForPreCapture);
 // 		setLiftPosition(botConfiguration.liftPositionForCapture);
     }
 
