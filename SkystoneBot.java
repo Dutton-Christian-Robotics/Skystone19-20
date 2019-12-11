@@ -106,6 +106,15 @@ public class SkystoneBot extends DefenderBot {
 
     // --------------------------------------------------------------------------------------------
 
+    public void manipulatorsToPreCapturePosition() {
+		openClaw();
+		setExtendPosition(botConfiguration.extendPositionForPreCapture);
+		setTiltPosition(botConfiguration.tiltPositionForPreCapture);
+// 		setLiftPosition(botConfiguration.liftPositionForCapture);
+    }
+
+    // --------------------------------------------------------------------------------------------
+
     public void manipulatorsToCapturePosition() {
 		openClaw();
 		setExtendPosition(botConfiguration.extendPositionForCapture);
@@ -162,7 +171,7 @@ public class SkystoneBot extends DefenderBot {
 	    	liftMotor.setPower(0);
     	}
 
-	public void setTiltPosition(int i) {
+	public void setLiftPosition(int i) {
 		setTiltPosition(i, 1);
 	}
 
@@ -242,7 +251,7 @@ public class SkystoneBot extends DefenderBot {
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
-    public void <p>setExtendPosition</p>(int i) {
+    public void setExtendPosition(int i) {
 	    	extendMotor.setPower(1);
 		extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 		extendMotor.setTargetPosition(i);
@@ -305,8 +314,8 @@ public class SkystoneBot extends DefenderBot {
     // --------------------------------------------------------------------------------------------
 
     public void grabFoundation() {
-	    leftFoundationGrabber.setPosition(1.6);
-	    rightFoundationGrabber.setPosition(1.6);
+	    leftFoundationGrabber.setPosition(0.3);
+	    rightFoundationGrabber.setPosition(0.3);
     }
 
     // --------------------------------------------------------------------------------------------
